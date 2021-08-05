@@ -1,0 +1,53 @@
+# Workflow specification version: 0
+#
+# Each workflow consists of multiple ordered stages.
+#   - A later stage may or may not depend on results of previous stages.
+#
+# Each stage consists of multiple independent tasks.
+#   - Each task should not depend on other tasks to run.
+#   - Each task can consists of one or multiple sub-tasks to run and collect different results
+#   - Sub-tasks can not be split into sub-sub-tasks.
+#   - Task has fields "name"(required) and "tags"(optional). These are used to generate unique ID.
+#     Task A and Task B may not have identical "name" and "tags" section; either "name" or "tags"
+#     section to be the same is allowed.
+#
+#   - Each sub-task has a driver, which runs and collect the result, then pass to its parent task in
+#     JSON format
+#   - Task collects the JSON results from its sub-tasks, then pass to the stage handler
+#   - Stage handler collects all results from its tasks, and then generate the output
+
+
+# (required) Workflow specification version
+version = "0"
+
+# (required) every workflow consists of multiple stages
+[[stages]]
+name = "<stage name>" # (required) used to track tasks in this stage
+
+    # (required) stage handler
+    [stages.run]
+        # (required) every stage handler should specify its driver
+        driver = "<handler driver>"
+        # (optional) some driver specific fields
+
+# (optional) defines a task for stage <stage name>
+[[<stage name>]]
+name = "<task1 name>" # (required)
+tags = ["<tag1>", "<tag2>", ...] # (optional) 
+
+    # (required) task runner
+    [[<stage name>.run]]
+        # (required) every task runner should specify its driver
+        driver = "<runner driver>"
+        # (optional) some driver specific fields
+
+# (optional) defines a task for stage <stage name>
+[[<stage name>]]
+name = "<task2 name>" # (required)
+tags = ["<tag1>", "<tag2>", ...] # (optional) 
+
+    # (required) task runner
+    [[<stage name>.run]]
+        # (required) every task runner should specify its driver
+        driver = "<runner driver>"
+        # (optional) some driver specific fields

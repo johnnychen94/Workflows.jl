@@ -1,0 +1,34 @@
+version = "0"
+
+[[stages]]
+name = "benchmark"
+deps = ["scripts"]
+
+    [stages.run]
+        metrics = ["time"]
+        out = ["results.csv"]
+        driver = "csv"
+
+[[benchmark]]
+name = "dilate"
+tags = ["juliaimages", "morphology"]
+
+    [[benchmark.run]]
+        source = "scripts/juliaimages/morphology/dilate.jl"
+        driver = "julia"
+
+[[benchmark]]
+name = "erode"
+tags = ["juliaimages", "morphology"]
+
+    [[benchmark.run]]
+        source = "scripts/juliaimages/morphology/erode.jl"
+        driver = "julia"
+
+[[benchmark]]
+name = "dilate"
+tags = ["skimage", "morphology"]
+
+    [[benchmark.run]]
+        driver = "shell"
+        command = "python scripts/skimage/morphology/dilate.py"
