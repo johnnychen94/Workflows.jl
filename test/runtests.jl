@@ -2,5 +2,10 @@ using Workflows
 using Test
 
 @testset "Workflows.jl" begin
-    # Write your tests here.
+    @info "run dialects test"
+    @testset "dialects" begin
+        include("dialects/foreign.jl")
+        include("dialects/manifest.jl")
+        include("dialects/config_io.jl")
+    end
 end

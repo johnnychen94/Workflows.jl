@@ -1,0 +1,18 @@
+version = "0.1"
+dialect = "manifest"
+
+order = [["1"]]
+
+[[tasks]]
+name = "task1"
+id = "1"
+runner = "juliamodule"
+[tasks.run]
+script = "main.jl"
+
+[[tasks]]
+name = "task1"
+id = "1"
+runner = "juliamodule"
+[tasks.run]
+script = "main.jl"

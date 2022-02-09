@@ -1,5 +1,8 @@
 module Workflows
 
-# Write your package code here.
+using Configurations
+
+include("dialects/Dialects.jl")
+using .Dialects: load_config, save_config
 
 end
