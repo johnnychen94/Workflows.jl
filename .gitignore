@@ -8,3 +8,5 @@ Manifest.toml
 
 __pycache__/
 .mypy_cache/
+
+.workflows

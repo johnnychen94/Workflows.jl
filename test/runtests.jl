@@ -1,4 +1,6 @@
 using Configurations
+using JSON3
+using Workflows
 using Workflows.Dialects: SimpleTask
 using Workflows.Runners: execute_task, build_runner, capture_run
 using Workflows.Runners: ShellExecutionError
@@ -22,4 +24,7 @@ include("testutils.jl")
         include("runners/juliamodule.jl")
         include("runners/shell.jl")
     end
+
+    @info "run schduler test"
+    include("scheduler.jl")
 end

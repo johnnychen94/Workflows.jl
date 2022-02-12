@@ -1,10 +1,15 @@
 module Workflows
 
 using Configurations
+using SHA
+using JSON3
 
 include("dialects/Dialects.jl")
 using .Dialects: load_config, save_config
+using .Dialects: AbstractWorkflow, ManifestWorkflow
+using .Dialects: task_id, task_deps
 include("runners/Runners.jl")
-using .Runners
+using .Runners: execute_task
+include("scheduler.jl")
 
 end

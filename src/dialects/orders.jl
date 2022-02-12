@@ -34,4 +34,30 @@ end
 PipelineOrder(stages::Vector{String}) = PipelineOrder([[x] for x in stages])
 Base.:(==)(p1::PipelineOrder, p2::PipelineOrder) = p1.stages == p2.stages
 
+function Base.iterate(o::PipelineOrder)
+    (length(o.stages) >= 1 && length(o.stages[1]) >= 1) || return nothing
+    status = falses(sum(length, o.stages))
+    status[1] = true
+    return o.stages[1][1], status
+end
+function Base.iterate(o::PipelineOrder, state)
+    length(o.stages) == 0 && return nothing
+    n = 0
+    for i in 1:length(o.stages)
+        cur_stage = o.stages[i]
+        stage_status = @view state[n+1:n+length(cur_stage)]
+        n += length(cur_stage)
+        all(stage_status) && continue
+        idx = findfirst(x->!x, stage_status)
+        if !isnothing(idx)
+            # Techniquelly, this can be thread unsafe in the sense that one task can be
+            # executed multiple times in parallel. It's the caller's duty to maintain the
+            # runtime status pool.
+            stage_status[idx] = true
+            return cur_stage[idx], state
+        end
+    end
+    return nothing
+end
+
 # TODO(johnnychen94): add DAG support
