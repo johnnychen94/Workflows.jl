@@ -24,6 +24,7 @@ build_runner(t::AbstractTask) = build_runner(Val(Symbol(runner_type(t))), runner
 build_runner(::Val{runner_type}, run_info::AbstractDict) where runner_type = error("Not implemented for runner type: $runner_type.")
 
 include("juliamodule.jl") # runner = "juliamodule"
+include("shell.jl") # runner = "shell"
 
 include("compat.jl")
 
