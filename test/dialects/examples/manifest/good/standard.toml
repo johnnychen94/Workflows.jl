@@ -1,0 +1,36 @@
+version = "0.1"
+dialect = "manifest"
+order = [["1"], ["2", "3"]]
+
+[[tasks]]
+name = "task1"
+id = "1"
+groups = ["groupA", "groupC"]
+deps = ["dirA", "fileB"]
+outs = ["@__STDOUT__"]
+runner = "juliamodule"
+[tasks.run]
+script = "main.jl"
+workdir = "@__DIR__"
+
+[[tasks]]
+name = "task3"
+id = "3"
+groups = ["groupA", "groupB"]
+deps = ["dirA", "fileB"]
+outs = ["@__STDOUT__"]
+runner = "juliamodule"
+[tasks.run]
+script = "main.jl"
+workdir = "@__DIR__"
+
+[[tasks]]
+name = "task2"
+id = "2"
+groups = ["groupA", "groupB"]
+deps = ["dirA", "fileB"]
+outs = ["@__STDOUT__"]
+runner = "juliamodule"
+[tasks.run]
+script = "main.jl"
+workdir = "@__DIR__"

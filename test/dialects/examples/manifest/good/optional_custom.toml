@@ -1,0 +1,15 @@
+version = "0.1"
+dialect = "manifest"
+
+order = [["1"]]
+
+[[tasks]]
+name = "task1"
+id = "1"
+groups = ["groupA", "groupB"]
+deps = ["dirA", "fileB"]
+outs = ["@__STDOUT__"]
+runner = "juliamodule"
+[tasks.run]
+workdir = "somewhere"
+script = "main.jl"
