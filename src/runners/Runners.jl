@@ -25,4 +25,6 @@ build_runner(::Val{runner_type}, run_info::AbstractDict) where runner_type = err
 
 include("juliamodule.jl") # runner = "juliamodule"
 
+include("compat.jl")
+
 end #module
