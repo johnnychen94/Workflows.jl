@@ -46,7 +46,11 @@ function from_dict(::Type{ManifestWorkflow}, ::OptionField{:tasks}, ::Type{Dict{
         end
         throw(ArgumentError("duplicate tasks detected: $(collect(ids))."))
     end
-    return Dict(t["id"]=>from_dict(SimpleTask, t) for t in tasks)
+    function _build_task(config)
+        T = haskey(config, "matrix") ? LoopTask : SimpleTask
+        from_dict(T, config)
+    end
+    return Dict(t["id"]=>_build_task(t) for t in tasks)
 end
 
 function to_dict(::Type{ManifestWorkflow}, tasks::Dict{String,AbstractTask}, option::Configurations.ToDictOption)
