@@ -86,7 +86,15 @@ function render(content::String, patterns::Dict)
     build_regex(name, value) = r"\${{\s*" * name * r"\s*}}" => value
 
     # TODO(johnnychen94): tweak the performance of `replace`
-    out = replace(content, (build_regex(k, v) for (k, v) in patterns)...)
+    out = _replace(content, (build_regex(k, v) for (k, v) in patterns)...)
     return out
 end
 render(x::Number, patterns) = x
+
+@static if VERSION < v"1.7"
+    # slooooow version
+    _replace(s, pat1, pat2...; kwargs...) = _replace(_replace(s, pat1; kwargs...), pat2...; kwargs...)
+    _replace(s, pat1; kwargs...) = replace(s, pat1; kwargs...)
+else
+    _replace(s, pat...; kwargs...) = replace(s, pat...; kwargs...)
+end
