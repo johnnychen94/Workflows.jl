@@ -12,4 +12,12 @@ include("runners/Runners.jl")
 using .Runners: execute_task
 include("scheduler.jl")
 
+
+"""
+Interfaces:
+
+- [`Workflows.execute`](@ref)
+"""
+Workflows
+
 end

@@ -21,9 +21,10 @@ function execute_task(exec::JuliaModuleRunner, t::AbstractTask; workdir::String=
         @debug "Executing task $(task_id(t)) in julia module" workdir=pwd() script
         Core.eval(m, :(include(x) = Base.include($m, x)))
         try
-            redirect_stdio(stdout=stdout, stderr=stderr, stdin=devnull) do
+            out = redirect_stdio(stdout=stdout, stderr=stderr, stdin=devnull) do
                 Core.eval(m, :(Base.include($m, $script)))
             end
+            return out
         catch err
             # Unwrap the LoadError due to `include("script.jl")` call so that it looks like
             # a "real" `julia script.jl` process.
