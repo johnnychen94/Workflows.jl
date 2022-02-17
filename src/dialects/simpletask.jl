@@ -14,3 +14,12 @@ task_deps(t::SimpleTask) = t.deps
 task_outs(t::SimpleTask) = t.outs
 runner_type(t::SimpleTask) = t.runner
 runner_info(t::SimpleTask) = t.run
+
+function Base.show(io::IO, t::SimpleTask)
+    print(io,
+        "SimpleTask(name=\"", t.name,
+        "\", id=\"", t.id,
+        "\", runner=\"", t.runner,
+        "\")"
+    )
+end
