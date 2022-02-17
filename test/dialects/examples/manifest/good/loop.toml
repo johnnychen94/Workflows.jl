@@ -1,0 +1,23 @@
+version = "0.1"
+dialect = "manifest"
+
+order = ["1", "2"]
+
+[[tasks]]
+    name = "task1"
+    id = "1"
+    runner = "shell"
+    groups = ["A", "B", "C"]
+    [tasks.matrix]
+        a = [1, 4]
+        b = [2, 8, 10]
+    [tasks.run]
+        command = "echo ${{ matrix.a }} ${{ matrix.b }}"
+        capture = true
+
+[[tasks]]
+    name = "task2"
+    id = "2"
+    runner = "juliamodule"
+    [tasks.run]
+        script = "main.jl"
