@@ -21,6 +21,7 @@ function execute(w::ManifestWorkflow; workdir=".", cleanup=false)
     results = Dict{String,Any}() # store the captured stdout result of shell runner
 
     tmpdir = workflow_tmpdir(w; workdir=workdir)
+    # TODO(johnnychen94): support normal/verbose/quite mode
     @info "execute workflow" workdir cleanup tmpdir
     if cleanup
         atexit() do
@@ -42,15 +43,15 @@ function execute(w::ManifestWorkflow; workdir=".", cleanup=false)
 
             # If this task requests STDOUT results from previous tasks, then dump the data
             # as json file and store the file path as environment variable. The task
-            # script/command is resonsible for appropriately handling this.
+            # script/command is responsible for appropriately handling this.
             stdout_deps = _get_stdout_deps(results, t)
             tmpfile = joinpath(tmpdir, "deps_$tid.json")
             env = _dump_stdout_to_temp(tmpfile, stdout_deps; workdir=workdir)
             if !isnothing(env)
-                @info "prepare task $(tid)" tmpfile
+                @info "prepare task: $(tid)" tmpfile
             end
 
-            @info "Executing task $(tid)"
+            @info "Executing task: $(tid)"
             results[taskid] = execute_task(t; workdir=workdir, env=env)
         end
     end

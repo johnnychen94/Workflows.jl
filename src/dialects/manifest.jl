@@ -1,20 +1,3 @@
-@option struct SimpleTask <: AbstractTask
-    name::String
-    id::String
-    groups::Vector{String} = String[]
-    deps::Vector{String} = String[]
-    outs::Vector{String} = String[]
-    runner::String # TODO(johnnychen94): verify runner type
-    run::Dict{String, Any} = Dict{String, Any}()
-end
-task_id(t::SimpleTask) = t.id
-task_name(t::SimpleTask) = t.name
-task_groups(t::SimpleTask) = t.groups
-task_deps(t::SimpleTask) = t.deps
-task_outs(t::SimpleTask) = t.outs
-runner_type(t::SimpleTask) = t.runner
-runner_info(t::SimpleTask) = t.run
-
 @option struct ManifestWorkflow <: AbstractWorkflow
     version::VersionNumber
     dialect::String = "manifest"
@@ -63,7 +46,11 @@ function from_dict(::Type{ManifestWorkflow}, ::OptionField{:tasks}, ::Type{Dict{
         end
         throw(ArgumentError("duplicate tasks detected: $(collect(ids))."))
     end
-    return Dict(t["id"]=>from_dict(SimpleTask, t) for t in tasks)
+    function _build_task(config)
+        T = haskey(config, "matrix") ? LoopTask : SimpleTask
+        from_dict(T, config)
+    end
+    return Dict(t["id"]=>_build_task(t) for t in tasks)
 end
 
 function to_dict(::Type{ManifestWorkflow}, tasks::Dict{String,AbstractTask}, option::Configurations.ToDictOption)

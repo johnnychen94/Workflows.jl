@@ -22,5 +22,19 @@
             @test issubset([".workflows", "test_outs", "Manifest.toml"], readdir(workdir))
             @test strip(read(joinpath(workdir, "test_outs", "results.json"), String)) == strip(msg)
         end
+
+        with_sandbox(includes=["examples"]) do
+            workdir = joinpath("examples", "manifest")
+
+            filename = joinpath(workdir, "loop.toml")
+            msg = @capture_out @suppress_err Workflows.execute(filename)
+            # msg = @capture_out Workflows.execute(filename) # debug
+            results = @test_nowarn JSON3.read(msg)
+            @test results[:exp] isa Float64
+            @test results[:sum] == ["3", "5", "5", "7", "7", "9", "16", "4"]
+
+            @test issubset([".workflows", "test_outs", "Manifest.toml"], readdir(workdir))
+            @test strip(read(joinpath(workdir, "test_outs", "results.json"), String)) == strip(msg)
+        end
     end
 end

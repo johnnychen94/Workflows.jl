@@ -17,6 +17,8 @@ abstract type AbstractExecutionOrder end
 
 include("traits.jl")
 include("orders.jl")
+include("simpletask.jl")
+include("looptask.jl")
 include("manifest.jl")
 include("utils.jl")
 include("config_io.jl")

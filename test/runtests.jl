@@ -16,6 +16,7 @@ include("testutils.jl")
     @testset "dialects" begin
         include("dialects/foreign.jl")
         include("dialects/manifest.jl")
+        include("dialects/looptask.jl")
         include("dialects/config_io.jl")
     end
 

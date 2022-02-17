@@ -28,7 +28,7 @@ groups = ["Package:LinearAlgebra", "Type:Benchmark"]
 deps = ["scripts"]
 runner = "shell"
 [tasks.run]
-command = "julia --startup=no scripts/large_sum.jl"
+command = "julia --startup=no --project=. scripts/large_sum.jl"
 capture = true
 
 [[tasks]]
@@ -39,7 +39,7 @@ deps = ["scripts"]
 outs = ["test_outs/exp.json"]
 runner = "shell"
 [tasks.run]
-command = "julia --startup=no scripts/exp.jl"
+command = "julia --startup=no --project=. scripts/exp.jl"
 enable_stderr = false
 enable_stdout = false
 
@@ -51,7 +51,7 @@ deps = ["summary.jl", "@__STDOUT__1", "@__STDOUT__2", "test_outs/exp.json"]
 outs = ["test_outs/results.json"]
 runner = "shell"
 [tasks.run]
-command = "julia --startup=no summary.jl"
+command = "julia --startup=no --project=. summary.jl"
 
 [[tasks]]
 name = "print result"
