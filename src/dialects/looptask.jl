@@ -4,6 +4,7 @@
     runner::String
     groups::Vector{String} = String[]
     deps::Vector{String} = String[]
+    requires::Vector{String} = String[]
     outs::Vector{String} = String[]
     matrix::Dict{String} = Dict{String,Any}()
     run::Dict{String, Any} = Dict{String, Any}()
@@ -13,6 +14,7 @@ task_id(t::LoopTask) = t.id
 task_name(t::LoopTask) = t.name
 task_groups(t::LoopTask) = t.groups
 task_deps(t::LoopTask) = t.deps
+task_requires(t::LoopTask) = t.requires
 task_outs(t::LoopTask) = t.outs
 runner_type(t::LoopTask) = t.runner
 runner_info(::LoopTask) = error("LoopTask must be unrolled first to get runner information")
@@ -34,6 +36,7 @@ function Base.collect(t::LoopTask)
         config["name"] = t.name
         config["runner"] = t.runner
         config["groups"] = t.groups
+        config["requires"] = t.requires
         config["deps"] = t.deps
         config["outs"] = t.outs
         config["id"] = t.id * "@$count"

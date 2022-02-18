@@ -4,55 +4,56 @@ dialect = "manifest"
 order = [["1", "2", "3", "4"], ["5"]]
 
 [[tasks]]
-name = "sum"
-id = "1"
-groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Julia"]
-deps = ["scripts/julia"]
-runner = "juliamodule"
-[tasks.run]
-script = "scripts/julia/sum.jl"
+    name = "sum"
+    id = "1"
+    groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Julia"]
+    deps = ["scripts/julia"]
+    runner = "juliamodule"
+    [tasks.run]
+        script = "scripts/julia/sum.jl"
 
 [[tasks]]
-name = "rand"
-id = "2"
-groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Julia"]
-deps = ["scripts/julia"]
-runner = "juliamodule"
-[tasks.run]
-script = "scripts/julia/rand.jl"
+    name = "rand"
+    id = "2"
+    groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Julia"]
+    deps = ["scripts/julia"]
+    runner = "juliamodule"
+    [tasks.run]
+        script = "scripts/julia/rand.jl"
 
 [[tasks]]
-name = "sum"
-id = "3"
-groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Numpy"]
-deps = ["scripts/python"]
-runner = "shell"
-[tasks.run]
-command = "python scripts/numpy/sum.py"
-capture = true
+    name = "sum"
+    id = "3"
+    groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Numpy"]
+    deps = ["scripts/python"]
+    runner = "shell"
+    [tasks.run]
+        command = "python scripts/numpy/sum.py"
+        capture = true
 
 [[tasks]]
-name = "randn"
-id = "4"
-groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Numpy"]
-deps = ["scripts/python"]
-runner = "shell"
-[tasks.run]
-command = "python scripts/numpy/randn.py"
-capture = true
+    name = "randn"
+    id = "4"
+    groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Numpy"]
+    deps = ["scripts/python"]
+    runner = "shell"
+    [tasks.run]
+        command = "python scripts/numpy/randn.py"
+        capture = true
 
 [[tasks]]
-name = "summary"
-id = "5"
-groups = ["Type:LinearAlgebra", "Type:Benchmark"]
-deps = [
-    "summary.jl",
-    "@__STDOUT__1",
-    "@__STDOUT__2",
-    "@__STDOUT__3",
-    "@__STDOUT__4",
-]
-outs = ["reports"]
-runner = "shell"
-[tasks.run]
-command = "julia --startup=no --project=. summary.jl"
+    name = "summary"
+    id = "5"
+    groups = ["Type:LinearAlgebra", "Type:Benchmark"]
+    deps = [
+        "summary.jl",
+        "@__STDOUT__1",
+        "@__STDOUT__2",
+        "@__STDOUT__3",
+        "@__STDOUT__4",
+    ]
+    requires = ["1", "2", "3", "4"]
+    outs = ["reports"]
+    runner = "shell"
+    [tasks.run]
+        command = "julia --startup=no --project=. summary.jl"

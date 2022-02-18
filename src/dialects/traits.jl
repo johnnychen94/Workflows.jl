@@ -18,27 +18,34 @@ Unlike [`taskid`](@ref), task names does not need to be unique.
 task_name(::T) where T<:AbstractTask = error("Not implemented for task type $(T).")
 
 """
-    task_groups(t::AbstractTask)::Set
+    task_groups(t::AbstractTask)::Vector{String}
 
 Return the groups that task `t` belongs to.
 """
 task_groups(::T) where T<:AbstractTask = error("Not implemented for task type $(T).")
 
 """
-    task_deps(t::AbstractTask)::Set
+    task_deps(t::AbstractTask)::Vector{String}
 
 Return the assumed dependencies that task `t` requires so as to be executed successfully.
 """
 task_deps(::T) where T<:AbstractTask = error("Not implemented for task type $(T).")
 
 """
-    task_outs(t::AbstractTask)::Set
+    task_outs(t::AbstractTask)::Vector{String}
 
 Return the assumed outputs that task execution of `t` will create, if executed
 successfully.
 """
 task_outs(::T) where T<:AbstractTask = error("Not implemented for task type $(T).")
 
+"""
+    task_requires(t::AbstractTask)::Vector{String}
+
+Return the required task IDs that should be executed before task `t`. For task node `t`
+in a task graph, they are the IDs of its direct parent nodes.
+"""
+task_requires(::T) where T<:AbstractTask = error("Not implemented for task type $(T)")
 
 """
     runner_type(t::AbstractTask)::String
