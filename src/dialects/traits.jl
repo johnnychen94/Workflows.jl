@@ -60,3 +60,10 @@ runner_type(::T) where T<:AbstractTask = error("Not implemented for task type $(
 Return the extra information for task `t` runner.
 """
 runner_info(::T) where T<:AbstractTask = error("Not implemented for task type $(T).")
+
+"""
+    workflow_tasks(w::AbstractWorkflow)
+
+Return tasks of workflow `w` as iterable object.
+"""
+workflow_tasks(::T) where T<:AbstractWorkflow = error("Not implemented for workflow type $(T)")

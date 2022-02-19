@@ -23,6 +23,7 @@
     end
 end
 load_config(::Val{:manifest}, config::AbstractDict) = from_dict(ManifestWorkflow, config)
+workflow_tasks(w::ManifestWorkflow) = values(w.tasks)
 
 function from_dict(::Type{ManifestWorkflow}, ::OptionField{:order}, ::Type{AbstractExecutionOrder}, order)
     if order isa AbstractVector

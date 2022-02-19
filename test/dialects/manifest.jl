@@ -3,7 +3,7 @@ module ManifestDialectTest
 using Configurations
 using Workflows
 using Workflows.Dialects
-using Workflows.Dialects: ManifestWorkflow
+using Workflows.Dialects: ManifestWorkflow, workflow_tasks, SimpleTask
 using Workflows.Dialects: PipelineOrder
 using Workflows.Dialects: task_id, task_name, task_groups, task_deps, task_outs
 using Workflows.Dialects: runner_type, runner_info
@@ -25,6 +25,9 @@ end
         w = from_toml(ManifestWorkflow, filename)
         w2 = load_back(w)
         @test w == w2
+
+        tasks = workflow_tasks(w)
+        @test first(tasks) isa SimpleTask
     end
 
     @testset "positive cases" begin
