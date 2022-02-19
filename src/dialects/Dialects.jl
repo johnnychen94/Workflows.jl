@@ -3,6 +3,7 @@ module Dialects
 using Configurations
 using TOML
 using Printf
+using ..TaskGraphs
 
 import Configurations: from_dict, to_dict
 
@@ -12,11 +13,12 @@ const spec_versions = begin
 end
 
 abstract type AbstractTask end
+TaskGraphs.TaskNode(t::AbstractTask) = TaskNode(task_id(t), task_requires(t))
+
 abstract type AbstractWorkflow end
-abstract type AbstractExecutionOrder end
+TaskGraphs.TaskGraph(w::AbstractWorkflow) = TaskGraph([TaskNode(t) for t in workflow_tasks(w)])
 
 include("traits.jl")
-include("orders.jl")
 include("simpletask.jl")
 include("looptask.jl")
 include("manifest.jl")

@@ -1,8 +1,6 @@
 version = "0.1"
 dialect = "manifest"
 
-order = [["julia_init", "python_init"], ["julia_benchmark", "numpy_benchmark"], ["summary"]]
-
 [[tasks]]
     name = "Initialize julia dependencies"
     id = "julia_init"
@@ -26,6 +24,7 @@ order = [["julia_init", "python_init"], ["julia_benchmark", "numpy_benchmark"], 
     id = "julia_benchmark"
     groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Julia"]
     deps = ["scripts/julia"]
+    requires = ["julia_init"]
     runner = "shell"
     [tasks.matrix]
         script = ["rand.jl", "sum.jl"]
@@ -45,6 +44,7 @@ order = [["julia_init", "python_init"], ["julia_benchmark", "numpy_benchmark"], 
     id = "numpy_benchmark"
     groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Numpy"]
     deps = ["scripts/python"]
+    requires = ["python_init"]
     runner = "shell"
     [tasks.matrix]
         script = ["randn.py", "sum.py"]
@@ -64,6 +64,7 @@ order = [["julia_init", "python_init"], ["julia_benchmark", "numpy_benchmark"], 
     id = "summary"
     groups = ["Type:LinearAlgebra", "Type:Benchmark"]
     deps = ["summary.jl", "@__STDOUT__julia_benchmark", "@__STDOUT__numpy_benchmark"]
+    requires = ["julia_benchmark", "numpy_benchmark"]
     outs = ["reports"]
     runner = "shell"
     run = { command = "julia --startup=no --project=. summary.jl" }

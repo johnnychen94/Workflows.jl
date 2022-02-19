@@ -1,6 +1,5 @@
 version = "0.1"
 dialect = "manifest"
-order = [["1"], ["2", "3"]]
 
 [[tasks]]
 name = "task1"
@@ -9,6 +8,7 @@ groups = ["groupA", "groupC"]
 deps = ["dirA", "fileB"]
 outs = ["@__STDOUT__"]
 runner = "juliamodule"
+requires = [""]
 [tasks.run]
 script = "main.jl"
 workdir = "@__DIR__"
@@ -20,6 +20,7 @@ groups = ["groupA", "groupB"]
 deps = ["dirA", "fileB"]
 outs = ["@__STDOUT__"]
 runner = "juliamodule"
+requires = ["2"]
 [tasks.run]
 script = "main.jl"
 workdir = "@__DIR__"
@@ -31,6 +32,7 @@ groups = ["groupA", "groupB"]
 deps = ["dirA", "fileB"]
 outs = ["@__STDOUT__"]
 runner = "juliamodule"
+requires = ["1"]
 [tasks.run]
 script = "main.jl"
 workdir = "@__DIR__"

@@ -1,6 +1,5 @@
 version = "999.999.999"
 dialect = "manifest"
-order = ["1"]
 
 [[tasks]]
 name = "task1"

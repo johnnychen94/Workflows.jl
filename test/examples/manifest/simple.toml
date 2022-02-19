@@ -1,8 +1,6 @@
 version = "0.1"
 dialect = "manifest"
 
-order = [["0"], ["1", "2", "3"], ["4"], ["5"]]
-
 [[tasks]]
 name = "init"
 id = "0"
@@ -18,6 +16,7 @@ id = "1"
 groups = ["Type:Base", "Type:Benchmark"]
 deps = ["scripts"]
 runner = "juliamodule"
+requires = ["0"]
 [tasks.run]
 script = "scripts/small_sum.jl"
 
@@ -27,6 +26,7 @@ id = "2"
 groups = ["Package:LinearAlgebra", "Type:Benchmark"]
 deps = ["scripts"]
 runner = "shell"
+requires = ["0"]
 [tasks.run]
 command = "julia --startup=no --project=. scripts/large_sum.jl"
 capture = true
@@ -38,6 +38,7 @@ groups = ["Package:Base", "Type:Benchmark"]
 deps = ["scripts"]
 outs = ["test_outs/exp.json"]
 runner = "shell"
+requires = ["0"]
 [tasks.run]
 command = "julia --startup=no --project=. scripts/exp.jl"
 enable_stderr = false
@@ -50,6 +51,7 @@ groups = ["Type:LinearAlgebra", "Type:Benchmark"]
 deps = ["summary.jl", "@__STDOUT__1", "@__STDOUT__2", "test_outs/exp.json"]
 outs = ["test_outs/results.json"]
 runner = "shell"
+requires = ["1", "2", "3"]
 [tasks.run]
 command = "julia --startup=no --project=. summary.jl"
 
@@ -58,5 +60,6 @@ name = "print result"
 id = "5"
 deps = ["test_outs/results.json"]
 runner = "shell"
+requires = ["4"]
 [tasks.run]
 command = "julia --startup=no --project=. print.jl"

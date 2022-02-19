@@ -4,6 +4,9 @@ using Configurations
 using SHA
 using JSON3
 
+include("taskgraphs/TaskGraphs.jl")
+using .TaskGraphs
+
 include("dialects/Dialects.jl")
 using .Dialects: load_config, save_config
 using .Dialects: AbstractWorkflow, ManifestWorkflow

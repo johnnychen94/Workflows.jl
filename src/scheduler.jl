@@ -35,7 +35,8 @@ function execute(w::ManifestWorkflow; workdir=".", cleanup=false)
     end
 
     # TODO(johnnychen94): support threads (#6)
-    for taskid in w.order
+    for graph_node in TaskGraph(w)
+        taskid = graph_node.id
         haskey(tasklocks, taskid) || (tasklocks[taskid] = ReentrantLock())
         lock(tasklocks[taskid]) do
             t = w.tasks[taskid]

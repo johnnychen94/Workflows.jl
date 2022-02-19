@@ -1,36 +1,15 @@
 @option struct ManifestWorkflow <: AbstractWorkflow
     version::VersionNumber
     dialect::String = "manifest"
-    order::AbstractExecutionOrder = PipelineOrder(String[])
     tasks::Dict{String,AbstractTask} = Dict{String,AbstractTask}()
-    function ManifestWorkflow(version::VersionNumber, dialect::String, order, tasks)
+    function ManifestWorkflow(version::VersionNumber, dialect::String, tasks)
         @assert dialect == "manifest"
-
-        order_taskids = Set(union(String[], order.stages...))
-        taskids_set = Set(keys(tasks))
-        if order_taskids != taskids_set
-            msg = if length(order_taskids) > length(taskids_set)
-                d = collect(setdiff(order_taskids, taskids_set))
-                @sprintf "\"order\" contains some undefined tasks: %s." d
-            else
-                d = collect(setdiff(taskids_set, order_taskids))
-                @sprintf "some tasks are not defined in \"order\": %s." d
-            end
-            throw(ArgumentError(msg))
-        end
-
-        new(version, dialect, order, tasks)
+        new(version, dialect, tasks)
     end
 end
 load_config(::Val{:manifest}, config::AbstractDict) = from_dict(ManifestWorkflow, config)
+workflow_tasks(w::ManifestWorkflow) = values(w.tasks)
 
-function from_dict(::Type{ManifestWorkflow}, ::OptionField{:order}, ::Type{AbstractExecutionOrder}, order)
-    if order isa AbstractVector
-        return PipelineOrder(order)
-    else
-        throw(ArgumentError("Unsupported order type: $(typeof(order))."))
-    end
-end
 from_dict(::Type{ManifestWorkflow}, ::Type{VersionNumber}, ver::AbstractString) = VersionNumber(ver)
 
 # To more efficiently get a task of specific task id, we convert the list to dictionary

@@ -26,6 +26,11 @@ include("testutils.jl")
         include("runners/shell.jl")
     end
 
+    @info "run graph tests"
+    @testset "TaskGraphs" begin
+        include("taskgraphs.jl")
+    end
+
     @info "run schduler test"
     include("scheduler.jl")
 end

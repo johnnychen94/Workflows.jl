@@ -1,8 +1,6 @@
 version = "0.1"
 dialect = "manifest"
 
-order = ["init", "sum", "exp", "summary", "report"]
-
 [[tasks]]
     name = "init"
     id = "init"
@@ -17,6 +15,7 @@ order = ["init", "sum", "exp", "summary", "report"]
     id = "sum"
     groups = ["Package:Base", "Type:Benchmark"]
     runner = "shell"
+    requires = ["init"]
     [tasks.matrix]
         a = [1, 3, 5]
         b = [2, 4]
@@ -40,6 +39,7 @@ order = ["init", "sum", "exp", "summary", "report"]
     deps = ["scripts"]
     outs = ["test_outs/exp.json"]
     runner = "shell"
+    requires = ["init"]
     [tasks.run]
         command = "julia --startup=no --project=. scripts/exp.jl"
         enable_stderr = false
@@ -52,6 +52,7 @@ order = ["init", "sum", "exp", "summary", "report"]
     deps = ["summary.jl", "@__STDOUT__sum"]
     outs = ["test_outs/results.json"]
     runner = "shell"
+    requires = ["exp", "sum"]
     [tasks.run]
         command = "julia --startup=no --project=. summary.jl"
 
@@ -59,5 +60,6 @@ order = ["init", "sum", "exp", "summary", "report"]
     name = "print result"
     id = "report"
     runner = "shell"
+    requires = ["summary"]
     [tasks.run]
         command = "julia --startup=no --project=. print.jl"
