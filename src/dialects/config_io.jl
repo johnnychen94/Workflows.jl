@@ -41,7 +41,6 @@ function save_config(filename::AbstractString, workflow::AbstractWorkflow)
 end
 
 # some custom types need to be converted to built in types before serialization
-convert_to_builtin(p::PipelineOrder) = p.stages
 convert_to_builtin(v::VersionNumber) = string(v)
 convert_to_builtin(v) = v
 
