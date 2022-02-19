@@ -79,6 +79,29 @@ julia> G.matrix
 julia> G[5] # get node object from node id: 5
 TaskNode{Int64}(5, [1, 3])
 ```
+
+The task graph can be iterated in a way that for task `t`, its prerequisite tasks are always
+returned first.
+
+```jldoctest; setup=:(using Workflows.TaskGraphs)
+julia> G = TaskGraph([TaskNode(3, []), TaskNode(5, [1, 3]), TaskNode(1, []), TaskNode(6, [1, 5])]);
+
+julia> for nid in G.ids # Task 5 is returned before Task 1
+    @show G[nid]
+end
+G[nid] = TaskNode{Int64}(3, Int64[])
+G[nid] = TaskNode{Int64}(5, [3, 1])
+G[nid] = TaskNode{Int64}(1, Int64[])
+G[nid] = TaskNode{Int64}(6, [5, 1])
+
+julia> for t in G # Task 5 is returned after Task 1
+    @show t
+end
+t = TaskNode{Int64}(3, Int64[])
+t = TaskNode{Int64}(1, Int64[])
+t = TaskNode{Int64}(5, [3, 1])
+t = TaskNode{Int64}(6, [5, 1])
+```
 """
 struct TaskGraph{T}
     ids::Vector{T}
@@ -120,6 +143,38 @@ end
 # TaskGraph is dictionary-like object
 function Base.getindex(G::TaskGraph{T}, id::T) where T
     TaskNode(id, G.ids[G.matrix[:, G.lookup[id]].nzind])
+end
+
+function Base.iterate(G::TaskGraph{T}) where T
+    length(G.ids) >= 1 || return nothing
+    scheduled = T[]
+    task, scheduled = _first_free_task(G, scheduled)
+    return isnothing(task) ? nothing : (task, scheduled)
+end
+
+function Base.iterate(G::TaskGraph{T}, scheduled::Vector{T}) where T
+    task, scheduled = _first_free_task(G, scheduled)
+    return isnothing(task) ? nothing : (task, scheduled)
+end
+
+function _first_free_task(G, scheduled)
+    # The iteration depends on how the graph is constructed. For example, if G.ids are
+    # constructed via depth-first search (DFS), then the iteration is also DFS.
+    for nid in G.ids
+        nid in scheduled && continue
+        pretasks = [t.id for t in prenodes(G, nid)]
+        # TODO(johnnychen94): This is not parallel safe because scheduling a task does not
+        # imply the task will be successfully executed. We might want to provide a callback
+        # function to update the global state.
+        # @show pretasks scheduled setdiff(pretasks, scheduled)
+        if isempty(setdiff(pretasks, scheduled))
+            # Reach here when the task has no prerequisite tasks, or all prerequisite tasks
+            # are already scheduled.
+            push!(scheduled, nid)
+            return G[nid], scheduled
+        end
+    end
+    return nothing, scheduled
 end
 
 """

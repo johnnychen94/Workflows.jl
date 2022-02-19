@@ -59,5 +59,3 @@ function Base.iterate(o::PipelineOrder, state)
     end
     return nothing
 end
-
-# TODO(johnnychen94): add DAG support
