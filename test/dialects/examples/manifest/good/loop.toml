@@ -1,8 +1,6 @@
 version = "0.1"
 dialect = "manifest"
 
-order = ["1", "2"]
-
 [[tasks]]
     name = "task1"
     id = "1"

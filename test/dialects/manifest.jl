@@ -4,7 +4,6 @@ using Configurations
 using Workflows
 using Workflows.Dialects
 using Workflows.Dialects: ManifestWorkflow, workflow_tasks, SimpleTask
-using Workflows.Dialects: PipelineOrder
 using Workflows.Dialects: task_id, task_name, task_groups, task_deps, task_outs
 using Workflows.Dialects: runner_type, runner_info
 using Test
@@ -54,18 +53,10 @@ end
         @test task_deps(t) == String["dirA", "fileB"]
         @test task_outs(t) == String["@__STDOUT__"]
 
-        # order can be Vector{String}
-        filename = joinpath(casedir, "flat_order.toml")
-        w = from_toml(ManifestWorkflow, filename)
-        @test w.order isa PipelineOrder
-        @test w.order.stages == [["1"], ["2"]]
-
         # empty workflow is allowed
         filename = joinpath(casedir, "empty.toml")
         w = from_toml(ManifestWorkflow, filename)
         @test length(w.tasks) == 0
-        @test w.order isa PipelineOrder
-        @test length(w.order.stages) == 0
     end
 
     @testset "negative cases" begin
@@ -74,21 +65,6 @@ end
         # task ID should be unique across the workflow
         filename = joinpath(casedir, "duplicate_taskid.toml")
         err = ArgumentError("duplicate tasks detected: [\"1\"].")
-        @test_throws err from_toml(ManifestWorkflow, filename)
-
-        # DAG required: one task can't be executed multiple times
-        filename = joinpath(casedir, "duplicate_order.toml")
-        err = ArgumentError("duplicate tasks detected in \"order\": [\"1\"].")
-        @test_throws err from_toml(ManifestWorkflow, filename)
-
-        # each task defined in the workflow should have a well-defined execution order
-        filename = joinpath(casedir, "missing_order.toml")
-        err = ArgumentError("some tasks are not defined in \"order\": [\"2\"].")
-        @test_throws err from_toml(ManifestWorkflow, filename)
-
-        # each item listed in the order should have a corresponding task
-        filename = joinpath(casedir, "missing_task.toml")
-        err = ArgumentError("\"order\" contains some undefined tasks: [\"3\"].")
         @test_throws err from_toml(ManifestWorkflow, filename)
     end
 end

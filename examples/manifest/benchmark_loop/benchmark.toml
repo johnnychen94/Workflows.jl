@@ -1,8 +1,6 @@
 version = "0.1"
 dialect = "manifest"
 
-order = [["julia_init", "python_init"], ["julia_benchmark", "numpy_benchmark"], ["summary"]]
-
 [[tasks]]
     name = "Initialize julia dependencies"
     id = "julia_init"
