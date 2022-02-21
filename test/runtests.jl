@@ -12,6 +12,11 @@ using TOML
 include("testutils.jl")
 
 @testset "Workflows.jl" begin
+    @info "run graph tests"
+    @testset "TaskGraphs" begin
+        include("taskgraphs.jl")
+    end
+
     @info "run dialects test"
     @testset "dialects" begin
         include("dialects/foreign.jl")
@@ -24,11 +29,6 @@ include("testutils.jl")
     @testset "runners" begin
         include("runners/juliamodule.jl")
         include("runners/shell.jl")
-    end
-
-    @info "run graph tests"
-    @testset "TaskGraphs" begin
-        include("taskgraphs.jl")
     end
 
     @info "run schduler test"
