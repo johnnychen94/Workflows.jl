@@ -10,7 +10,7 @@ dialect = "manifest"
         a = [1, 4]
         b = [2, 8, 10]
     [tasks.run]
-        command = "echo ${{ matrix.a }} ${{ matrix.b }}"
+        command = "julia --startup=no -e 'println(\"${{ matrix.a }} ${{ matrix.b }}\")'"
         capture = true
 
 [[tasks]]
