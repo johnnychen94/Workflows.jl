@@ -25,4 +25,6 @@ include("manifest.jl")
 include("utils.jl")
 include("config_io.jl")
 
+include("workflow_ops.jl")
+
 end #module

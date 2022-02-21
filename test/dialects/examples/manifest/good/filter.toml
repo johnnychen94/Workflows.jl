@@ -1,0 +1,55 @@
+version = "0.1"
+dialect = "manifest"
+
+[[tasks]]
+    name = "task1"
+    id = "1"
+    runner = "shell"
+    [tasks.run]
+        command = "julia --startup=no -e 'println(\"task1: 1\")'"
+        capture = true
+
+[[tasks]]
+    name = "task2"
+    id = "2"
+    runner = "shell"
+    [tasks.run]
+        command = "julia --startup=no -e 'println(\"task2: 2\")'"
+        capture = true
+
+[[tasks]]
+    name = "task3"
+    id = "3"
+    runner = "shell"
+    [tasks.matrix]
+        values = ["3.1", "3.2", "3.3"]
+    [tasks.run]
+        command = "julia --startup=no -e 'println(${{matrix.values}})'"
+        capture = true
+
+[[tasks]]
+    name = "summary_single"
+    id = "4_1"
+    runner = "shell"
+    requires = ["1", "2"]
+    [tasks.run]
+        command = "julia --startup=no -e 'println(read(ENV[\"WORKFLOW_TMP_INFILE\"], String))'"
+        capture = true
+
+[[tasks]]
+    name = "summary_loop"
+    id = "4_2"
+    runner = "shell"
+    requires = ["3"]
+    [tasks.run]
+        command = "julia --startup=no -e 'println(read(ENV[\"WORKFLOW_TMP_INFILE\"], String))'"
+        capture = true
+
+[[tasks]]
+    name = "summary_all"
+    id = "5"
+    runner = "shell"
+    requires = ["4_1", "4_2"]
+    [tasks.run]
+        command = "julia --startup=no -e 'println(read(ENV[\"WORKFLOW_TMP_INFILE\"], String))'"
+        capture = true
