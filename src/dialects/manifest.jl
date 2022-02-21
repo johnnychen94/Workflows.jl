@@ -7,6 +7,7 @@
         new(version, dialect, tasks)
     end
 end
+Base.convert(::Type{ManifestWorkflow}, w::ManifestWorkflow) = w
 load_config(::Val{:manifest}, config::AbstractDict) = from_dict(ManifestWorkflow, config)
 workflow_tasks(w::ManifestWorkflow) = values(w.tasks)
 

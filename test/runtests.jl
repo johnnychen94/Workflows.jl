@@ -23,6 +23,7 @@ include("testutils.jl")
         include("dialects/manifest.jl")
         include("dialects/looptask.jl")
         include("dialects/config_io.jl")
+        include("dialects/workflow_ops.jl")
     end
 
     @info "run runners test"

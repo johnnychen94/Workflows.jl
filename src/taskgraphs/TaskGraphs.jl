@@ -233,4 +233,31 @@ function _prenodes!(trace, finished, visited, graph, node)
     return
 end
 
+"""
+    min_subgraph(graph::TaskGraph, nodes::Vector)
+
+Create the minimal subgraph that contains `nodes` and all [prenodes](@ref) of `nodes`.
+"""
+function min_subgraph(graph::TaskGraph{T}, nodes::Vector) where T
+    @assert length(nodes) > 0 "Empty nodes are not allowed."
+    nodes = eltype(nodes) === T ? map(n->graph[n], nodes) : nodes
+
+    # merge all prenodes and build the graph from them
+    new_nodes = prenodes(graph, nodes[1])
+    for i in 2:length(nodes)
+        # TODO(johnnychen94): because we do not need duplicate nodes when building the
+        # graph, context information can be shared to accelerate the calculation of prenodes
+        append!(new_nodes, prenodes(graph, nodes[i]))
+        length(new_nodes) > length(graph.ids) && unique!(new_nodes)
+    end
+    append!(new_nodes, nodes)
+    unique!(new_nodes)
+    return TaskGraph(new_nodes)
+end
+function min_subgraph(graph::TaskGraph{T}, node::T) where T
+    new_nodes = prenodes(graph, node)
+    push!(new_nodes, graph[node])
+    TaskGraph(new_nodes)
+end
+
 end # module
