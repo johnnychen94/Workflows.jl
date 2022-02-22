@@ -109,3 +109,54 @@ render(x::Number, patterns) = x
 else
     _replace(s, pat...; kwargs...) = replace(s, pat...; kwargs...)
 end
+
+
+# TaskVector is a simple collection of tasks while still preserving the `AbstractTask`
+# hierarchy. This can be used to store the unrolled LoopTask.
+struct TaskVector{T<:AbstractTask} <: AbstractTask
+    tasks::Vector{T}
+    name::String
+    id::String
+    requires::Vector{String}
+    outs::Vector{String}
+    deps::Vector{String}
+    groups::Vector{String}
+end
+TaskVector(ts::Vector) = TaskVector(ts...)
+function TaskVector(ts::AbstractTask...)
+    ids = unique(map(task_id, ts))
+    length(ids) == 1 || throw(ArgumentError("TaskVector can't contain tasks of different IDs: $ids"))
+    id = ids[1]
+
+    names = unique(map(task_name, ts))
+    length(names) == 1 || throw(ArgumentError("TaskVector can't contain tasks of different names: $names"))
+    name = names[1]
+
+    i = 1
+    tasks = mapreduce(append!, ts) do t
+        map(_unroll(t)) do new_t
+            # re-assign the task IDs to ensure uniqueness
+            t_config = to_dict(new_t)
+            t_config["id"] = split(t_config["id"], "@")[1] * "@$i"
+            i += 1
+            from_dict(typeof(new_t), t_config)
+        end
+    end
+    requires = mapreduce(task_requires, append!, ts)
+    groups = mapreduce(task_groups, append!, ts)
+    outs = mapreduce(task_outs, append!, ts)
+    deps = mapreduce(task_deps, append!, ts)
+    return TaskVector(tasks, name, id, requires,outs, deps, groups)
+end
+
+task_id(t::TaskVector) = t.id
+task_name(t::TaskVector) = t.name
+task_groups(t::TaskVector) = t.groups
+task_deps(t::TaskVector) = t.deps
+task_requires(t::TaskVector) = t.requires
+task_outs(t::TaskVector) = t.outs
+Base.show(io::IO, t::TaskVector) = print(io, "TaskVector(name=\"", task_name(t), "\", id=\"", task_id(t), "\")")
+
+_unroll(t::SimpleTask) = [t]
+_unroll(t::LoopTask) = collect(t)
+_unroll(t::TaskVector) = t.tasks
