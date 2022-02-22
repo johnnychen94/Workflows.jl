@@ -39,6 +39,7 @@ struct TaskNode{T}
 end
 
 Base.:(==)(a::TaskNode, b::TaskNode) = a.id == b.id && a.parents == b.parents
+Base.hash(n::TaskNode) = hash(hash(n.parents), hash(n.id))
 
 """
     TaskGraph(nodes::Vector{TaskNode})
@@ -125,6 +126,10 @@ end
 
 function TaskGraph(nodes::Vector{<:TaskNode})
     ids = map(n->n.id, nodes)
+    if length(unique(ids)) != length(ids)
+        non_unique_ids = unique(filter(x->count(isequal(x), ids)>1, ids))
+        throw(ArgumentError("Duplicate node IDs are not allowed: $non_unique_ids"))
+    end
     rids = Dict(id=>i for (i, id) in enumerate(ids))
     Is, Js = Int[], Int[]
     Vs = Bool[]
