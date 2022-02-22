@@ -27,9 +27,13 @@ function Base.collect(t::LoopTask)
     special_names = ("includes", "excludes")
     matrix_keys = [k for k in keys(t.matrix) if !in(k, special_names)]
     excludes = get(t.matrix, "excludes", Dict{String,Any}[])
-    excludes = [Dict("matrix.$k"=>v for (k, v) in patterns) for patterns in excludes]
+    excludes = Dict{String,String}[Dict("matrix.$k"=>string(v) for (k, v) in patterns) for patterns in excludes]
+    unique!(excludes)
     includes = get(t.matrix, "includes", Dict{String,Any}[])
-    includes = [Dict("matrix.$k"=>v for (k, v) in patterns) for patterns in includes]
+    includes = Dict{String,String}[Dict("matrix.$k"=>string(v) for (k, v) in patterns) for patterns in includes]
+    unique!(includes)
+    special_common = intersect(includes, excludes)
+    isempty(special_common) || error("Ambiguous \"matrix\" configuration: $special_common are listed in both \"includes\" and \"excludes\".")
 
     function _build_task(t, patterns; count::Int)
         config = Dict{String,Any}()
@@ -47,15 +51,19 @@ function Base.collect(t::LoopTask)
     items = SimpleTask[]
     patterns = Dict{String, String}()
     id_count = 1
+    seen = Dict{String,String}[]
     for v in Base.Iterators.product(getindex.(Ref(t.matrix), matrix_keys)...)
+        length(matrix_keys) == 0 && continue
         for (i, k) in enumerate(matrix_keys)
             patterns["matrix.$k"] = string(v[i])
         end
         patterns in excludes && continue
         push!(items, _build_task(t, patterns; count=id_count))
+        isempty(includes) || push!(seen, copy(patterns))
         id_count += 1
     end
     for patterns in includes
+        patterns in seen && continue
         push!(items, _build_task(t, patterns; count=id_count))
         id_count += 1
     end

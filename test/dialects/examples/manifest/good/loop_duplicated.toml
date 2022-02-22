@@ -1,0 +1,25 @@
+version = "0.1"
+dialect = "manifest"
+
+[[tasks]]
+    name = "1"
+    id = "1"
+    runner = "shell"
+    [tasks.matrix]
+        a = [1, 2]
+        b = [3, 4]
+        [[tasks.matrix.includes]]
+            a = 1
+            b = 4
+        [[tasks.matrix.includes]]
+            a = 1
+            b = 4
+        [[tasks.matrix.excludes]]
+            a = 2
+            b = 3
+        [[tasks.matrix.excludes]]
+            a = 2
+            b = 3
+    [tasks.run]
+        command = "julia --startup=no -e 'println(\"${{ matrix.a }} ${{ matrix.b }}\")'"
+        capture = true
