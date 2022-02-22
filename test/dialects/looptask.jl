@@ -59,9 +59,9 @@ using Test
 end
 
 @testset "looptask" begin
-    casedir = joinpath(@__DIR__, "examples", "manifest", "good")
+    casedir = joinpath(@__DIR__, "examples", "manifest")
 
-    w = load_config(joinpath(casedir, "loop.toml"))
+    w = load_config(joinpath(casedir, "good", "loop.toml"))
     t = w.tasks["1"]
     @test t isa LoopTask
     @test task_id(t) == "1"
@@ -80,6 +80,15 @@ end
     rst = execute_task(t)
     # Although the execution order might be undetermined, the result order should be fixed
     @test rst == ["1 2", "1 8", "1 10", "4 2", "4 8", "4 10"]
+
+    # duplicated includes/excludes (#23)
+    w = load_config(joinpath(casedir, "good", "loop_duplicated.toml"))
+    unrolled = collect(w.tasks["1"])
+    @test length(unrolled) == 3
+
+    w = load_config(joinpath(casedir, "bad", "loop_duplicated.toml"))
+    msg = "Ambiguous \"matrix\" configuration: [Dict(\"matrix.b\" => \"6\", \"matrix.a\" => \"5\")] are listed in both \"includes\" and \"excludes\"."
+    @test_throws ErrorException(msg) collect(w.tasks["1"])
 end
 
 end # module

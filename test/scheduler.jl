@@ -31,7 +31,7 @@
             # msg = @capture_out Workflows.execute(filename) # debug
             results = @test_nowarn JSON3.read(msg)
             @test results[:exp] isa Float64
-            @test results[:sum] == ["3", "5", "5", "7", "7", "9", "16", "4"]
+            @test results[:sum] == ["5", "5", "7", "7", "9", "16", "4"]
 
             @test issubset([".workflows", "test_outs", "Manifest.toml"], readdir(workdir))
             @test strip(read(joinpath(workdir, "test_outs", "results.json"), String)) == strip(msg)
