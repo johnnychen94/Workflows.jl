@@ -12,6 +12,7 @@ load_config(::Val{:manifest}, config::AbstractDict) = from_dict(ManifestWorkflow
 workflow_tasks(w::ManifestWorkflow) = values(w.tasks)
 
 from_dict(::Type{ManifestWorkflow}, ::Type{VersionNumber}, ver::AbstractString) = VersionNumber(ver)
+from_dict(::Type{ManifestWorkflow}, ::Type{VersionNumber}, ver::VersionNumber) = ver
 
 # To more efficiently get a task of specific task id, we convert the list to dictionary
 # before construction. Because this is different from how we represent it in the
