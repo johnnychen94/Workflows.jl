@@ -1,0 +1,81 @@
+dialect = "manifest"
+version = "0.1"
+
+[[tasks]]
+    name = "1"
+    id = "1"
+    groups = ["File:1"]
+    runner = "shell"
+    [tasks.run]
+        command = 'julia --startup=no -e "println(1)"'
+
+[[tasks]]
+    name = "2"
+    id = "2"
+    runner = "shell"
+    groups = ["File:1"]
+    [tasks.run]
+        command = 'julia --startup=no -e "println(2)"'
+
+[[tasks]]
+    name = "3"
+    id = "3"
+    requires = ["1"]
+    runner = "shell"
+    groups = ["File:1"]
+    [tasks.run]
+        command = 'julia --startup=no -e "println(3)"'
+
+[[tasks]]
+    name = "4"
+    id = "4"
+    requires = ["1", "6"]
+    runner = "shell"
+    groups = ["File:1", "File:2"]
+    [tasks.matrix]
+        [[tasks.matrix.includes]]
+            a = 1
+            b = 4
+        [[tasks.matrix.includes]]
+            a = 2
+            b = 4
+        [[tasks.matrix.includes]]
+            a = 1
+            b = 5
+        [[tasks.matrix.includes]]
+            a = 2
+            b = 5
+        [[tasks.matrix.includes]]
+            a = 3
+            b = 6
+        [[tasks.matrix.includes]]
+            a = 4
+            b = 7
+    [tasks.run]
+        command = 'julia --startup=no -e "println(${{matrix.a}}, ${{matrix.b}})"'
+
+[[tasks]]
+    name = "6"
+    id = "6"
+    groups = ["File:2"]
+    runner = "shell"
+    [tasks.run]
+        command = 'julia --startup=no -e "println(6)"'
+
+[[tasks]]
+    name = "7"
+    id = "7"
+    requires = ["4"]
+    groups = ["File:2"]
+    runner = "shell"
+    [tasks.run]
+        command = 'julia --startup=no -e "println(7)"'
+
+[[tasks]]
+    name = "9"
+    id = "9"
+    requires = ["7"]
+    groups = ["File:2"]
+    runner = "shell"
+    [tasks.run]
+        command = 'julia --startup=no -e "println(9)"'

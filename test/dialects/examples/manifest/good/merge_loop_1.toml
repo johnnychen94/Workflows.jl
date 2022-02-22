@@ -1,0 +1,37 @@
+dialect = "manifest"
+version = "0.1"
+
+[[tasks]]
+    name = "1"
+    id = "1"
+    groups = ["File:1"]
+    runner = "shell"
+    [tasks.run]
+        command = 'julia --startup=no -e "println(1)"'
+
+
+[[tasks]]
+    name = "2"
+    id = "2"
+    runner = "shell"
+    groups = ["File:1"]
+    [tasks.run]
+        command = 'julia --startup=no -e "println(2)"'
+
+[[tasks]]
+    name = "3"
+    id = "3"
+    requires = ["1"]
+    runner = "shell"
+    groups = ["File:1"]
+    [tasks.run]
+        command = 'julia --startup=no -e "println(3)"'
+
+[[tasks]]
+    name = "4"
+    id = "4"
+    requires = ["1"]
+    runner = "shell"
+    groups = ["File:1"]
+    [tasks.run]
+        command = 'julia --startup=no -e "println(1, 4)"'

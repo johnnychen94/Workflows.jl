@@ -1,7 +1,7 @@
 module Runners
 
 using Configurations
-using ..Dialects: AbstractTask, LoopTask
+using ..Dialects: AbstractTask, LoopTask, TaskVector
 using ..Dialects: task_id, task_name, task_groups, task_deps, task_outs
 using ..Dialects: runner_type, runner_info
 
@@ -15,8 +15,9 @@ Execute task `t` using runner `exec` in folder `workdir`.
 execute_task(task::AbstractTask; kwargs...) = execute_task(build_runner(task), task; kwargs...)
 execute_task(r::RT, t::AbstractTask; kwargs...) where RT<:AbstractTaskRunner = error("Not implemented for runner type: $RT.")
 
-function execute_task(task::LoopTask; kwargs...)
-    map(collect(task)) do t
+execute_task(task::LoopTask; kwargs...) = execute_task(TaskVector(task); kwargs...)
+function execute_task(task::TaskVector; kwargs...)
+    map(task.tasks) do t
         execute_task(t; kwargs...)
     end
 end

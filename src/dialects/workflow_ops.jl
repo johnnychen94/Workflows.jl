@@ -75,12 +75,7 @@ function Base.merge(w::AbstractWorkflow, ws::AbstractWorkflow...)
             if haskey(x.tasks, tid)
                 # if two graphs have tasks of the same id, then merge the tasks
                 old_t = x.tasks[tid]
-                new_t = try
-                    _merge_task(old_t, t)
-                catch err
-                    err isa MergeConflictError && error("failed to merge task id $tid: conflict detected.")
-                    rethrow()
-                end
+                new_t = _merge_task(old_t, t)
                 x.tasks[task_id(t)] = new_t
             else
                 x.tasks[task_id(t)] = t
@@ -91,11 +86,26 @@ function Base.merge(w::AbstractWorkflow, ws::AbstractWorkflow...)
 end
 
 _merge_task(::T1, ::T2) where {T1<:AbstractTask, T2<:AbstractTask} = error("can't merge tasks of types: $(T1) and $(T2)")
-function _merge_task(t1::SimpleTask, t2::SimpleTask)
-    from_dict(SimpleTask, _merge_config!(to_dict(t1), to_dict(t2)))
-end
-# TODO(johnnychen94): support merge workflows with LoopTask
 
+const LoopOrTaskVector = Union{LoopTask, TaskVector}
+_merge_task(t1::LoopOrTaskVector, t2::AbstractTask) = __merge_task(t1, t2)
+_merge_task(t1::AbstractTask, t2::LoopOrTaskVector) = __merge_task(t1, t2)
+_merge_task(t1::LoopOrTaskVector, t2::LoopOrTaskVector) = __merge_task(t1, t2)
+function __merge_task(ts::AbstractTask...)
+    t = TaskVector(ts...)
+    tasks = t.tasks
+    return length(tasks) == 1 ? tasks[1] : t # not type-stable
+end
+
+function _merge_task(t1::SimpleTask, t2::SimpleTask)
+    task_id(t1) == task_id(t2) || error("Task IDs should be the same, instead they are: $(task_id(t1)) and $(task_id(t2))")
+    try
+        from_dict(SimpleTask, _merge_config!(to_dict(t1), to_dict(t2)))
+    catch err
+        err isa MergeConflictError && error("failed to merge task id $(task_id(t1)): conflict detected.")
+        rethrow()
+    end
+end
 # deep nested merge!/append!
 function _merge_config!(d1::AbstractDict, d2::AbstractDict)
     for k in keys(d1)
