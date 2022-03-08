@@ -2,6 +2,7 @@ module Dialects
 
 using Configurations
 using TOML
+import YAML
 using Printf
 using ..TaskGraphs
 

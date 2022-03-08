@@ -1,0 +1,36 @@
+version: "0.1"
+dialect: manifest
+
+tasks:
+  - name: task1
+    id: "1"
+    groups: ["groupA", "groupC"]
+    deps: ["dirA", "fileB"]
+    outs: ["@__STDOUT__"]
+    runner: "juliamodule"
+    requires: [""]
+    run:
+      script: "main.jl"
+      workdir: "@__DIR__"
+
+  - name: task3
+    id: "3"
+    groups: ["groupA", "groupB"]
+    deps: ["dirA", "fileB"]
+    outs: ["@__STDOUT__"]
+    runner: "juliamodule"
+    requires: ["2"]
+    run:
+      script: "main.jl"
+      workdir: "@__DIR__"
+
+  - name: task2
+    id: "2"
+    groups: ["groupA", "groupB"]
+    deps: ["dirA", "fileB"]
+    outs: ["@__STDOUT__"]
+    runner: "juliamodule"
+    requires: ["1"]
+    run:
+      script: "main.jl"
+      workdir: "@__DIR__"

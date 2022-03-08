@@ -9,6 +9,8 @@ function load_config(filename::AbstractString)
         # https://toml.io/en/v1.0.0#filename-extension
         # TOML files should use the extension `.toml`
         TOML.parsefile(filename)
+    elseif ext in (".yml", ".yaml")
+        YAML.load_file(filename; dicttype=Dict{String, Any})
     else
         throw(ArgumentError("unsupported file extension: \"$ext\"."))
     end

@@ -21,6 +21,10 @@ const example_dir = joinpath(@__DIR__, "examples")
     save_config(tmpfile, w)
     w2 = load_config(tmpfile)
     @test w == w2
+    # also test that YAML file are parsed exactly the same as TOML file
+    config_filename = joinpath(example_dir, "manifest", "good", "standard.yml")
+    w3 = load_config(config_filename)
+    @test w == w3
 
     # extension sensitive
     tmptxt = joinpath(tmp_testdir, "tmp.txt")

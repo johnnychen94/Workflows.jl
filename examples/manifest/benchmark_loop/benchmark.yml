@@ -1,0 +1,67 @@
+version: "0.1"
+dialect: manifest
+
+tasks:
+  - name: Initialize julia dependencies
+    id: julia_init
+    runner: shell
+    run:
+      command: julia --startup=no --project=. -e 'using Pkg; Pkg.instantiate()'
+      enable_stderr: false
+      enable_stdout: false
+
+  - name: Initialize python dependencies
+    id: python_init
+    runner: shell
+    run:
+      command: pip install numpy -q
+      enable_stderr: false
+      enable_stdout: false
+
+  - name: basic
+    id: julia_benchmark
+    groups: ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Julia"]
+    deps: ["scripts/julia"]
+    requires: ["julia_init"]
+    runner: shell
+    run:
+      command: julia --startup=no --project=. scripts/julia/${{ matrix.script }} ${{ matrix.length }}
+      capture: true
+    matrix:
+      script: ["rand.jl", "sum.jl"]
+      length: [64, 128, 256, 512, 1024, 2048, 4096]
+      includes:
+        - script: "sum.jl"
+          length: 8192
+      excludes:
+        - script: "rand.jl"
+          length: 4096
+
+  - name: basic
+    id: numpy_benchmark
+    groups: ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Numpy"]
+    deps: ["scripts/python"]
+    requires: ["python_init"]
+    runner: shell
+    run:
+      command: python scripts/numpy/${{ matrix.script }} ${{ matrix.length }}
+      capture: true
+    matrix:
+      script: ["randn.py", "sum.py"]
+      length: [64, 128, 256, 512, 1024, 2048]
+      includes:
+        - script: "randn.py"
+          length: 32
+        - script: "sum.py"
+          length: 4096
+
+  - name: summary
+    id: summary
+    groups: ["Type:LinearAlgebra", "Type:Benchmark"]
+    deps: ["summary.jl", "@__STDOUT__julia_benchmark", "@__STDOUT__numpy_benchmark"]
+    requires: ["julia_benchmark", "numpy_benchmark"]
+    outs: ["reports"]
+    runner: shell
+    run:
+      command: julia --startup=no --project=. summary.jl
+
