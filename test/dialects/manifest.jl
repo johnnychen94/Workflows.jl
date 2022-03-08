@@ -57,6 +57,10 @@ end
         filename = joinpath(casedir, "empty.toml")
         w = from_toml(ManifestWorkflow, filename)
         @test length(w.tasks) == 0
+
+        # missing double-quotes for version is allowed
+        filename = joinpath(casedir, "version.toml")
+        @test_nowarn from_toml(ManifestWorkflow, filename)
     end
 
     @testset "negative cases" begin

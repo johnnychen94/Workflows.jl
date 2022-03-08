@@ -51,3 +51,8 @@ end
 function Configurations.to_toml(filename::String, x::AbstractWorkflow; kwargs...)
     to_toml(convert_to_builtin, filename, x; kwargs...)
 end
+
+# VersionNumber support
+from_dict(::Type{T}, ::Type{VersionNumber}, ver::AbstractString) where T<:AbstractWorkflow = VersionNumber(ver)
+from_dict(::Type{T}, ::Type{VersionNumber}, ver::VersionNumber) where T<:AbstractWorkflow = ver
+from_dict(::Type{T}, ::Type{VersionNumber}, ver::Real) where T<:AbstractWorkflow = VersionNumber(string(ver))

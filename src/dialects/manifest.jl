@@ -11,9 +11,6 @@ Base.convert(::Type{ManifestWorkflow}, w::ManifestWorkflow) = w
 load_config(::Val{:manifest}, config::AbstractDict) = from_dict(ManifestWorkflow, config)
 workflow_tasks(w::ManifestWorkflow) = values(w.tasks)
 
-from_dict(::Type{ManifestWorkflow}, ::Type{VersionNumber}, ver::AbstractString) = VersionNumber(ver)
-from_dict(::Type{ManifestWorkflow}, ::Type{VersionNumber}, ver::VersionNumber) = ver
-
 # To more efficiently get a task of specific task id, we convert the list to dictionary
 # before construction. Because this is different from how we represent it in the
 # configuration file, which is a list, we hereby patch it with `from_dict`/`to_dict`
