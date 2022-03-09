@@ -55,5 +55,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: julia --startup=no --project=examples -e 'using Pkg; Pkg.develop(path=".")'
-      - run: julia --startup=no --project=examples examples/run.jl
+      - run: julia --startup=no --color=yes --project=examples -e 'using Pkg; Pkg.develop(path=".")'
+      - run: julia --startup=no --color=yes --project=examples examples/run.jl
