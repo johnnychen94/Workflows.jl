@@ -12,13 +12,11 @@ julia --project=examples -e 'using Pkg; Pkg.develop(path=".")'
 julia --project=examples -e 'using Pkg; Pkg.initialize()'
 ```
 
-and then run all of them via
+and then execute all examples via
 
 ```console
 julia --project=examples examples/run.jl
 ```
-
-You may check `examples/run.jl` to see how to run individual example.
 
 ## Description
 
