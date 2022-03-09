@@ -50,3 +50,10 @@ jobs:
       - uses: codecov/codecov-action@v1
         with:
           file: lcov.info
+
+  test_examples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: julia --startup=no --project=examples -e 'using Pkg; Pkg.develop(path=".")'
+      - run: julia --startup=no --project=examples examples/run.jl
