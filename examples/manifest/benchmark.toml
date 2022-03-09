@@ -2,10 +2,29 @@ version = "0.1"
 dialect = "manifest"
 
 [[tasks]]
+    name = "Initialize julia dependencies"
+    id = "julia_init"
+    runner = "shell"
+    [tasks.run]
+        command = "julia --startup=no --project=. -e 'using Pkg; Pkg.instantiate()'"
+        enable_stderr = false
+        enable_stdout = false
+
+[[tasks]]
+    name = "Initialize python dependencies"
+    id = "python_init"
+    runner = "shell"
+    [tasks.run]
+        command = "pip install numpy -q"
+        enable_stderr = false
+        enable_stdout = false
+
+[[tasks]]
     name = "sum"
     id = "1"
     groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Julia"]
     deps = ["scripts/julia"]
+    requires = ["julia_init"]
     runner = "juliamodule"
     [tasks.run]
         script = "scripts/julia/sum.jl"
@@ -15,6 +34,7 @@ dialect = "manifest"
     id = "2"
     groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Julia"]
     deps = ["scripts/julia"]
+    requires = ["julia_init"]
     runner = "juliamodule"
     [tasks.run]
         script = "scripts/julia/rand.jl"
@@ -24,6 +44,7 @@ dialect = "manifest"
     id = "3"
     groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Numpy"]
     deps = ["scripts/python"]
+    requires = ["python_init"]
     runner = "shell"
     [tasks.run]
         command = "python scripts/numpy/sum.py"
@@ -34,6 +55,7 @@ dialect = "manifest"
     id = "4"
     groups = ["Type:LinearAlgebra", "Type:Benchmark", "Framework:Numpy"]
     deps = ["scripts/python"]
+    requires = ["python_init"]
     runner = "shell"
     [tasks.run]
         command = "python scripts/numpy/randn.py"
