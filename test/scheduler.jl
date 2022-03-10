@@ -6,6 +6,7 @@
         rm(joinpath(examples_dir, "manifest", ".workflows"), recursive=true, force=true)
         rm(joinpath(examples_dir, "manifest", "test_outs"), recursive=true, force=true)
 
+        # dialect: manifest
         with_sandbox(includes=["examples"]) do
             workdir = joinpath("examples", "manifest")
 
@@ -23,6 +24,7 @@
             @test strip(read(joinpath(workdir, "test_outs", "results.json"), String)) == strip(msg)
         end
 
+        # dialect: manifest
         with_sandbox(includes=["examples"]) do
             workdir = joinpath("examples", "manifest")
 
@@ -32,6 +34,24 @@
             results = @test_nowarn JSON3.read(msg)
             @test results[:exp] isa Float64
             @test results[:sum] == ["5", "5", "7", "7", "9", "16", "4"]
+
+            @test issubset([".workflows", "test_outs", "Manifest.toml"], readdir(workdir))
+            @test strip(read(joinpath(workdir, "test_outs", "results.json"), String)) == strip(msg)
+        end
+
+        # dialect: manifest_runner
+        with_sandbox(includes=["examples"]) do
+            workdir = joinpath("examples", "manifest")
+
+            filename = joinpath(workdir, "simple_runner.yml")
+            msg = @capture_out @suppress_err Workflows.execute(filename)
+            # msg = @capture_out Workflows.execute(filename) # debug
+            results = @test_nowarn JSON3.read(msg)
+
+            @test sort!(String.(keys(results))) == ["1", "2", "exp"]
+            @test sort!(String.(keys(JSON3.read(results["1"])))) == ["10", "100", "1000"]
+            @test sort!(String.(keys(JSON3.read(results["2"])))) == ["1000", "2000", "3000"]
+            @test results[:exp] isa Float64
 
             @test issubset([".workflows", "test_outs", "Manifest.toml"], readdir(workdir))
             @test strip(read(joinpath(workdir, "test_outs", "results.json"), String)) == strip(msg)

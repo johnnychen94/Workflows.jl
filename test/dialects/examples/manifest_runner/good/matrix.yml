@@ -1,0 +1,20 @@
+version: "0.1"
+dialect: manifest_runner
+
+runners:
+  julia:
+    runner: shell
+    run:
+      command: julia --startup=no --project=. ${{ tasks.script }} ${{ tasks.args }}
+
+tasks:
+  - name: "julia"
+    id: julia1
+    runner: julia
+    script: main.jl
+    args:
+      - ${{ matrix.length }}
+      - ${{ matrix.type }}
+    matrix:
+      length: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+      type: [Float64, Int]

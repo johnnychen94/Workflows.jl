@@ -1,0 +1,12 @@
+version: "0.1"
+dialect: manifest
+
+tasks:
+  - name: "julia"
+    id: julia1
+    runner: shell
+    run:
+      command: julia --startup=no --project=. main.jl ${{ matrix.length }} ${{ matrix.type }}
+    matrix:
+      length: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+      type: [Float64, Int]

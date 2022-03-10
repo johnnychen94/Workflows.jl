@@ -1,0 +1,71 @@
+version: "0.1"
+dialect: manifest_runner
+
+runners:
+  hello:
+    runner: shell
+    run:
+      command: julia --startup=no -e 'println("hello ${{ tasks.args }}!")'
+  hi:
+    runner: shell
+    run:
+      command: julia --startup=no -e 'println("hi!")'
+    # `init` is optional
+    init:
+      runner: shell
+      run:
+        command: julia --startup=no -e 'println("initialize hi runner")'
+  julia:
+    runner: shell
+    run:
+      command: julia --startup=no ${{ tasks.script }} ${{ tasks.args }}
+  # if a custom runner is not used, the initialization task will not be appended
+  not_used:
+    runner: shell
+    run:
+      command:
+    init:
+      runner: shell
+      run:
+        command:
+
+tasks:
+  # `args` can be a String
+  - name: "hello"
+    id: hello1
+    runner: hello
+    args: "world"
+
+  # `args` can be a list of strings and will be joined with space
+  - name: "hello again"
+    id: hello2
+    runner: hello
+    args:
+      - "Workflows.jl"
+
+  # mixing custom runners with builtin runners are supported
+  - name: "hello the third time"
+    id: hello3
+    runner: shell
+    run:
+      command: julia --startup=no -e 'println("hello and hello!")'
+
+  # "args" is optional
+  - name: "hi"
+    id: hi1
+    runner: hi
+
+  - name: "hi"
+    id: hi2
+    runner: hi
+    requires: ["hello1"]
+
+  # "script" is also optional
+  - name: "julia"
+    id: julia1
+    runner: julia
+    script: hello.jl
+    args:
+      - world
+      - Workflows.jl
+

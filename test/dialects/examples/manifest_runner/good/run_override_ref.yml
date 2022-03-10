@@ -1,0 +1,10 @@
+version: "0.1"
+dialect: manifest
+
+tasks:
+  - name: "julia"
+    id: julia1
+    runner: shell
+    run:
+      command: julia --startup=no --project=. main.jl
+
