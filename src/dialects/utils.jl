@@ -13,7 +13,7 @@ function check_version(::Type{Bool}, dialect::String, ver::VersionNumber)
         return true
     end
     spec_ver = spec_versions[dialect]
-    ver.major <= spec_ver.major || return false
+    ver.major == spec_ver.major && ver.minor <= spec_ver.minor || return false
     ver.major == 0 && ver.minor == spec_ver.minor || return false
     return true
 end
