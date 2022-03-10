@@ -21,11 +21,11 @@ TaskGraphs.TaskNode(t::AbstractTask) = TaskNode(task_id(t), task_requires(t))
 abstract type AbstractWorkflow end
 TaskGraphs.TaskGraph(w::AbstractWorkflow) = TaskGraph([TaskNode(t) for t in workflow_tasks(w)])
 
-include("traits.jl")
 include("simpletask.jl")
 include("looptask.jl")
 include("manifest.jl") # dialect: manifest
 include("manifest_runner.jl") # dialect: manifest_runner
+include("traits.jl")
 include("utils.jl")
 include("config_io.jl")
 

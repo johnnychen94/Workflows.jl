@@ -9,6 +9,7 @@ tasks:
       dir:
         - 'examples/manifest'
         - 'examples/manifest_loop'
+        - 'examples/manifest_runner'
     run:
       command: julia --startup=no --project=${{ matrix.dir }} -e 'using Pkg; Pkg.develop(path=".")'
       workdir: '.'
@@ -26,6 +27,8 @@ tasks:
           file: manifest_loop/benchmark.toml
         - dir: manifest_loop
           file: manifest_loop/benchmark.yml
+        - dir: manifest_runner
+          file: manifest_runner/benchmark.yml
     run:
       command: julia --startup=no --project=${{ matrix.dir }} -e 'using Workflows; Workflows.execute(raw"${{ matrix.file }}")'
       workdir: examples
