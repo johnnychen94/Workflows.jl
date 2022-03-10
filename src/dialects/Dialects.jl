@@ -24,7 +24,8 @@ TaskGraphs.TaskGraph(w::AbstractWorkflow) = TaskGraph([TaskNode(t) for t in work
 include("traits.jl")
 include("simpletask.jl")
 include("looptask.jl")
-include("manifest.jl")
+include("manifest.jl") # dialect: manifest
+include("manifest_runner.jl") # dialect: manifest_runner
 include("utils.jl")
 include("config_io.jl")
 

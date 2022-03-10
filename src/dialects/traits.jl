@@ -67,3 +67,11 @@ runner_info(::T) where T<:AbstractTask = error("Not implemented for task type $(
 Return tasks of workflow `w` as iterable object.
 """
 workflow_tasks(::T) where T<:AbstractWorkflow = error("Not implemented for workflow type $(T)")
+
+"""
+    to_manifest(w::AbstractWorkflow)
+
+Convert workflow `w` to [`ManifestWorkflow`](@ref).
+"""
+to_manifest(::T) where T<:AbstractWorkflow = error("Not implemented for workflow type $(T)")
+Base.convert(::Type{ManifestWorkflow}, w::AbstractWorkflow) = to_manifest(w)

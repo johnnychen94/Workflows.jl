@@ -16,6 +16,7 @@ function execute(filename::AbstractString; workdir="", kwargs...)
     execute(w; workdir=workdir, kwargs...)
 end
 
+execute(w::AbstractWorkflow; kwargs...) = execute(convert(ManifestWorkflow, w); kwargs...)
 function execute(w::ManifestWorkflow; workdir=".", cleanup=false)
     tasklocks = Dict{String,ReentrantLock}()
     results = Dict{String,Any}() # store the captured stdout result of shell runner
