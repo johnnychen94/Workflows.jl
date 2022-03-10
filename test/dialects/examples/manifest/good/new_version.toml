@@ -2,6 +2,6 @@ version = "999.999.999"
 dialect = "manifest"
 
 [[tasks]]
-name = "task1"
-id = "1"
-runner = "juliamodule"
+    name = "task1"
+    id = "1"
+    runner = "juliamodule"

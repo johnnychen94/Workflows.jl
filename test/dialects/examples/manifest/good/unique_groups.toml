@@ -2,9 +2,9 @@ version = "0.1"
 dialect = "manifest"
 
 [[tasks]]
-name = "task1"
-id = "1"
-groups = ["A", "A", "B", "A"]
-runner = "juliamodule"
-[tasks.run]
-script = "main.jl"
+    name = "task1"
+    id = "1"
+    groups = ["A", "A", "B", "A"]
+    runner = "juliamodule"
+    [tasks.run]
+        script = "main.jl"
