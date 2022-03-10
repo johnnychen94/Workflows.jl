@@ -4,6 +4,7 @@ using Configurations
 using ..Dialects: AbstractTask, LoopTask, TaskVector
 using ..Dialects: task_id, task_name, task_groups, task_deps, task_outs
 using ..Dialects: runner_type, runner_info
+using ..Dialects: _builtin_runners
 
 abstract type AbstractTaskRunner end
 
@@ -34,5 +35,11 @@ include("juliamodule.jl") # runner = "juliamodule"
 include("shell.jl") # runner = "shell"
 
 include("compat.jl")
+
+function __init__()
+    push!(_builtin_runners, "shell")
+    push!(_builtin_runners, "juliamodule")
+    return
+end
 
 end #module

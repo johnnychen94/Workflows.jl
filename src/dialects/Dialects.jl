@@ -13,6 +13,8 @@ const spec_versions = begin
     Dict(k=>VersionNumber(v["version"]) for (k, v) in config)
 end
 
+const _builtin_runners = Set{String}()
+
 abstract type AbstractTask end
 TaskGraphs.TaskNode(t::AbstractTask) = TaskNode(task_id(t), task_requires(t))
 
