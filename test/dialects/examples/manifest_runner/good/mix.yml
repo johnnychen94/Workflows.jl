@@ -5,7 +5,7 @@ runners:
   hello:
     runner: shell
     run:
-      command: julia --startup=no -e 'println("hello ${{ tasks.args }}!")'
+      command: julia --startup=no -e 'println("hello ${{ tasks.run }}!")'
   hi:
     runner: shell
     run:
@@ -18,7 +18,7 @@ runners:
   julia:
     runner: shell
     run:
-      command: julia --startup=no ${{ tasks.script }} ${{ tasks.args }}
+      command: julia --startup=no ${{ tasks.run.script }} ${{ tasks.run.args }}
   # if a custom runner is not used, the initialization task will not be appended
   not_used:
     runner: shell
@@ -30,17 +30,17 @@ runners:
         command:
 
 tasks:
-  # `args` can be a String
+  # `run` can be a String
   - name: "hello"
     id: hello1
     runner: hello
-    args: "world"
+    run: "world"
 
-  # `args` can be a list of strings and will be joined with space
+  # `run` can be a list of strings and will be joined with space
   - name: "hello again"
     id: hello2
     runner: hello
-    args:
+    run:
       - "Workflows.jl"
 
   # mixing custom runners with builtin runners are supported
@@ -64,8 +64,9 @@ tasks:
   - name: "julia"
     id: julia1
     runner: julia
-    script: hello.jl
-    args:
-      - world
-      - Workflows.jl
+    run:
+      script: hello.jl
+      args:
+        - world
+        - Workflows.jl
 

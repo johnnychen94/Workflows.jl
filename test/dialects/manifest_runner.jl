@@ -22,7 +22,6 @@ using Test
         @test w3 isa ManifestWorkflow
         @test w1 == w3
 
-
         casedir = joinpath(@__DIR__, "examples", "manifest_runner", "good")
 
         w1 = @test_nowarn load_config(joinpath(casedir, "mix.yml"))
@@ -37,14 +36,6 @@ using Test
         w2 = load_config(joinpath(casedir, "matrix_ref.yml"))
         w3 = convert(ManifestWorkflow, w1)
         @test w2 == w3
-
-        # run field is ignored but there will be warning messages
-        w1 = load_config(joinpath(casedir, "run_override.yml"))
-        w2 = load_config(joinpath(casedir, "run_override_ref.yml"))
-        w3 = @suppress_err convert(ManifestWorkflow, w1)
-        @test w2 == w3
-        msg = @capture_err convert(ManifestWorkflow, w1)
-        @test occursin("\"run\" field for task \"julia1\" is overridden by custom runner \"julia\".", msg)
     end
 
     # TODO(johnnychen94): add negative cases

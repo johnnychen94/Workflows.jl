@@ -50,26 +50,11 @@ function to_manifest(w::CustomRunnerWorkflow)
             push!(tasks, init_tasks[rname])
         end
 
-        # rewrite task by submitting `runners`
-        runner_config = Dict{String,String}()
-        haskey(t, "run") && @warn "\"run\" field for task \"$(t["id"])\" is overridden by custom runner \"$(rname)\"."
-        t["run"] = Dict{String,Any}()
-
-        if haskey(t, "script") # optional
-            runner_config["tasks.script"] = t["script"]
-            delete!(t, "script")
+        # rewrite task by submitting `runners` with custom `run` information
+        runner_config = Dict{String,Any}("tasks"=>Dict{String,Any}())
+        if haskey(t, "run")
+            runner_config["tasks"]["run"] = deepcopy(t["run"])
         end
-
-        if haskey(t, "args") # optional
-            t["run"]["args"] = t["args"] # args: ${{ tasks.args }}
-            runner_config["tasks.args"] = if t["args"] isa AbstractString
-                t["args"]
-            else
-                join(t["args"], " ")
-            end
-            delete!(t, "args")
-        end
-
         t["run"] = render(runners[rname]["run"], runner_config)
         t["runner"] = runners[rname]["runner"]
 

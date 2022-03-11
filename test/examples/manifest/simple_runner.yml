@@ -5,18 +5,18 @@ runners:
   juliamodule:
     runner: juliamodule
     run:
-      script: ${{ tasks.script }}
+      script: ${{ tasks.run.script }}
 
   julia_stdout:
     runner: shell
     run:
-      command: julia --startup=no --project=. ${{ tasks.script }}
+      command: julia --startup=no --project=. ${{ tasks.run.script }}
       capture: true
 
   julia:
     runner: shell
     run:
-      command: julia --startup=no --project=. ${{ tasks.script }}
+      command: julia --startup=no --project=. ${{ tasks.run.script }}
       enable_stderr: false
       enable_stdout: false
 
@@ -35,7 +35,8 @@ tasks:
     deps: ["scripts"]
     requires: ["0"]
     runner: juliamodule
-    script: scripts/small_sum.jl
+    run:
+      script: scripts/small_sum.jl
 
   - name: "norm"
     id: "2"
@@ -43,7 +44,8 @@ tasks:
     deps: ["scripts"]
     requires: ["0"]
     runner: julia_stdout
-    script: scripts/large_sum.jl
+    run:
+      script: scripts/large_sum.jl
 
   - name: "exp"
     id: "3"
@@ -52,7 +54,8 @@ tasks:
     outs: ["test_outs/exp.json"]
     requires: ["0"]
     runner: julia
-    script: scripts/exp.jl
+    run:
+      script: scripts/exp.jl
 
   - name: "summary"
     id: "4"

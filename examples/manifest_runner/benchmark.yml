@@ -6,7 +6,7 @@ runners:
   julia:
     runner: shell
     run:
-      command: julia --startup=no --project=. ${{ tasks.script }} ${{ tasks.args }}
+      command: julia --startup=no --project=. ${{ tasks.run.script }} ${{ tasks.run.args }}
       capture: true
     init: # if this runner is used, run init task first
       runner: shell
@@ -16,7 +16,7 @@ runners:
   python:
     runner: shell
     run:
-      command: python ${{ tasks.script }} ${{ tasks.args }}
+      command: python ${{ tasks.run.script }} ${{ tasks.run.args }}
       capture: true
     init:
       runner: shell
@@ -28,9 +28,10 @@ tasks:
     id: julia_rand
     groups: [uniform, julia]
     runner: julia
-    script: scripts/julia/rand.jl
-    args:
-      - ${{ matrix.length }}
+    run:
+      script: scripts/julia/rand.jl
+      args:
+        - ${{ matrix.length }}
     matrix:
       length: [64, 128, 256, 512, 1024, 2048]
 
@@ -38,9 +39,10 @@ tasks:
     groups: [sum, julia]
     id: julia_sum
     runner: julia
-    script: scripts/julia/sum.jl
-    args:
-      - ${{ matrix.length }}
+    run:
+      script: scripts/julia/sum.jl
+      args:
+        - ${{ matrix.length }}
     matrix:
       length: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
 
@@ -48,9 +50,10 @@ tasks:
     groups: [gaussian, numpy]
     id: numpy_randn
     runner: python
-    script: scripts/numpy/randn.py
-    args:
-      - ${{ matrix.length }}
+    run:
+      script: scripts/numpy/randn.py
+      args:
+        - ${{ matrix.length }}
     matrix:
       length: [32, 64, 128, 256, 512, 1024, 2048]
 
@@ -58,9 +61,10 @@ tasks:
     groups: [sum, numpy]
     id: numpy_sum
     runner: python
-    script: scripts/numpy/sum.py
-    args:
-      - ${{ matrix.length }}
+    run:
+      script: scripts/numpy/sum.py
+      args:
+        - ${{ matrix.length }}
     matrix:
       length: [64, 128, 256, 512, 1024, 2048, 4096]
 
@@ -68,9 +72,10 @@ tasks:
     groups: [sum, python]
     id: python_sum
     runner: python
-    script: scripts/python/sum.py
-    args:
-      - ${{ matrix.length }}
+    run:
+      script: scripts/python/sum.py
+      args:
+        - ${{ matrix.length }}
     matrix:
       length: [64, 128, 256, 512, 1024, 2048, 4096]
 
