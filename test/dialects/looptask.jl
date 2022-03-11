@@ -36,7 +36,7 @@ using Test
     @test length(unrolled) == 3
 
     w = load_config(joinpath(casedir, "bad", "loop_duplicated.toml"))
-    msg = "Ambiguous \"matrix\" configuration: [Dict(\"matrix.b\" => \"6\", \"matrix.a\" => \"5\")] are listed in both \"includes\" and \"excludes\"."
+    msg = "Ambiguous \"matrix\" configuration: [Dict(\"b\" => \"6\", \"a\" => \"5\")] are listed in both \"includes\" and \"excludes\"."
     @test_throws ErrorException(msg) collect(w.tasks["1"])
 end
 

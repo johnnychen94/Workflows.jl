@@ -7,16 +7,16 @@ using Test
     @testset "string" begin
         msg = raw"echo ${{ matrix.greet}}, ${{ matrix.name   }}"
 
-        config = Dict("matrix.greet" => "hello", "matrix.name" => "world")
+        config = Dict("matrix" => Dict("greet" => "hello", "name" => "world"))
         @test "echo hello, world" == render(msg, config)
 
         # extra patterns are ignored
-        config = Dict("matrix.greet" => "hello", "matrix.name" => "world", "spam" => nothing)
+        config = Dict("matrix" => Dict("greet" => "hello", "name" => "world"), "spam" => nothing)
         @test render(msg, config) == "echo hello, world"
 
         # all occurences of the same name are substituted
         msg = raw"echo ${{ matrix.greet }}, ${{ matrix.name }}, ${{ matrix.greet }}"
-        config = Dict("matrix.greet"=>"hello", "matrix.name"=>"world")
+        config = Dict("matrix" => Dict("greet" => "hello", "name" => "world"))
         @test render(msg, config) == "echo hello, world, hello"
 
         config = Dict("a" => Dict("b" => 3))
@@ -35,6 +35,10 @@ using Test
         # missing entries is not allowed; we want to eagerly check potential errors
         config = Dict{String,Any}()
         @test_throws KeyError render(raw"${{ a }}", config)
+
+        # "a.b"-like key are not allowed because it introduces ambiguity
+        config = Dict{String,Any}("a.b"=>3, "a"=>Dict("b"=>4)) # "${{ a.b }}" is 3 or 4??
+        @test_throws ErrorException("key \"a.b\" should not contain dot.") render(raw"${{ a.b }}", config)
     end
 
     @testset "dict" begin

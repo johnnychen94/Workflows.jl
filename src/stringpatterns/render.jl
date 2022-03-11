@@ -81,6 +81,7 @@ end
 
 function _build_value_lookup!(patterns, config::AbstractDict; prefix)
     for (k, v) in config
+        occursin(".", k) && error("key \"$k\" should not contain dot.")
         pname = isempty(prefix) ? string(k) : "$prefix.$k"
         _build_value_lookup!(patterns, v; prefix=pname)
     end
