@@ -16,4 +16,4 @@ dialect = "manifest"
             b = 6
     [tasks.run]
         command = "julia --startup=no -e 'println(\"${{ matrix.a }} ${{ matrix.b }}\")'"
-        capture = true
+        capture_stdout = true

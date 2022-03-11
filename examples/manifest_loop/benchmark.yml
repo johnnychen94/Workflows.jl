@@ -26,7 +26,7 @@ tasks:
     runner: shell
     run:
       command: julia --startup=no --project=. scripts/julia/${{ matrix.script }} ${{ matrix.length }}
-      capture: true
+      capture_stdout: true
     matrix:
       script: ["rand.jl", "sum.jl"]
       length: [64, 128, 256, 512, 1024, 2048, 4096]
@@ -45,7 +45,7 @@ tasks:
     runner: shell
     run:
       command: python scripts/numpy/${{ matrix.script }} ${{ matrix.length }}
-      capture: true
+      capture_stdout: true
     matrix:
       script: ["randn.py", "sum.py"]
       length: [64, 128, 256, 512, 1024, 2048]

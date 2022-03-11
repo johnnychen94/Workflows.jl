@@ -48,7 +48,7 @@ dialect = "manifest"
     runner = "shell"
     [tasks.run]
         command = "python scripts/numpy/sum.py"
-        capture = true
+        capture_stdout = true
 
 [[tasks]]
     name = "randn"
@@ -59,7 +59,7 @@ dialect = "manifest"
     runner = "shell"
     [tasks.run]
         command = "python scripts/numpy/randn.py"
-        capture = true
+        capture_stdout = true
 
 [[tasks]]
     name = "summary"

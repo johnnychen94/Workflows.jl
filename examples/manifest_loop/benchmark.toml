@@ -37,7 +37,7 @@ dialect = "manifest"
             length = "4096"
     [tasks.run]
         command = "julia --startup=no --project=. scripts/julia/${{ matrix.script }} ${{ matrix.length }}"
-        capture = true
+        capture_stdout = true
 
 [[tasks]]
     name = "basic"
@@ -57,7 +57,7 @@ dialect = "manifest"
             length = 4096
     [tasks.run]
         command = "python scripts/numpy/${{ matrix.script }} ${{ matrix.length }}"
-        capture = true
+        capture_stdout = true
 
 [[tasks]]
     name = "summary"

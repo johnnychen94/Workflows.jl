@@ -2,7 +2,7 @@
     command::String
     workdir::String = "@__DIR__"
     """set true to capture the last non-empty line of stdout as execution result. The captured result will not be printed to stdout."""
-    capture::Bool = false
+    capture_stdout::Bool = false
     """set false to disable stdout, i.e., redirect to devnull."""
     enable_stdout::Bool = true
     """set false to disable stderr, i.e., redirect to devnull."""
@@ -21,7 +21,7 @@ function execute_task(exec::ShellRunner, t::AbstractTask; workdir::String=".", e
         stdout = exec.enable_stdout ? Base.stdout : devnull
         stderr = exec.enable_stderr ? Base.stderr : devnull
         try
-            if exec.capture
+            if exec.capture_stdout
                 capture_run(cmd; stdout=stdout, stderr=stderr, env=env)
             else
                 non_capture_run(cmd; stdout=stdout, stderr=stderr, env=env)

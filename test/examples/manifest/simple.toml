@@ -29,7 +29,7 @@ dialect = "manifest"
     requires = ["0"]
     [tasks.run]
         command = "julia --startup=no --project=. scripts/large_sum.jl"
-        capture = true
+        capture_stdout = true
 
 [[tasks]]
     name = "exp"

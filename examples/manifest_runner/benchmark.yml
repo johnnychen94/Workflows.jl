@@ -7,7 +7,7 @@ runners:
     runner: shell
     run:
       command: julia --startup=no --project=. ${{ tasks.run.script }} ${{ tasks.run.args }}
-      capture: true
+      capture_stdout: true
     init: # if this runner is used, run init task first
       runner: shell
       run:
@@ -17,7 +17,7 @@ runners:
     runner: shell
     run:
       command: python ${{ tasks.run.script }} ${{ tasks.run.args }}
-      capture: true
+      capture_stdout: true
     init:
       runner: shell
       run:

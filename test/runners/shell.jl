@@ -139,7 +139,7 @@ end
 
     taskinfo["run"] = Dict(
         "command" => "julia --startup=no scripts/sum.jl",
-        "capture" => true,
+        "capture_stdout" => true,
     )
     t = from_dict(SimpleTask, taskinfo)
     exec = build_runner(t)
@@ -152,7 +152,7 @@ end
     # check if we successfully parsed the stdout as return value
     taskinfo["run"] = Dict(
         "command" => "julia --startup=no scripts/println_sum.jl",
-        "capture" => true,
+        "capture_stdout" => true,
     )
     t = from_dict(SimpleTask, taskinfo)
     exec = build_runner(t)
@@ -168,7 +168,7 @@ end
     )
     t = from_dict(SimpleTask, taskinfo)
     exec = build_runner(t)
-    @test exec.capture == false # default is non-capturing
+    @test exec.capture_stdout == false # default is non-capturing
     with_sandbox(includes=[scripts_dir]) do
         dirs = readdir(workdir_prefix)
         rst = @suppress_out execute_task(t; workdir=workdir_prefix)
@@ -183,7 +183,7 @@ end
         "command" => "julia --startup=no scripts/log_println_sum.jl",
         "enable_stdout" => false,
         "enable_stderr" => false,
-        "capture" => true,
+        "capture_stdout" => true,
     )
     t = from_dict(SimpleTask, taskinfo)
     exec = build_runner(t)
@@ -223,7 +223,7 @@ end
     # env passing
     taskinfo["run"] = Dict(
         "command" => "julia --startup=no scripts/envcheck.jl",
-        "capture" => true,
+        "capture_stdout" => true,
     )
     t = from_dict(SimpleTask, taskinfo)
     exec = build_runner(t)
@@ -240,7 +240,7 @@ end
     # `echo 'hello world'` is different from `$(cmd)`
     taskinfo["run"] = Dict(
         "command" => "julia --startup=no -e 'println(\"hello world\")'",
-        "capture" => true
+        "capture_stdout" => true
     )
     t = from_dict(SimpleTask, taskinfo)
     exec = build_runner(t)

@@ -30,7 +30,7 @@ dialect = "manifest"
             b = 2
     [tasks.run]
         command = 'julia --startup=no --project=. -e "println(parse(Int, ARGS[1])+parse(Int, ARGS[2]))" ${{matrix.a}} ${{matrix.b}}'
-        capture = true
+        capture_stdout = true
 
 [[tasks]]
     name = "exp"
