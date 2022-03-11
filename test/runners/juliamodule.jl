@@ -142,5 +142,18 @@
         end
         @test dirs == []
         @test rst == 55
+
+        # passing args to ARGS
+        taskinfo["run"] = Dict(
+            "script" => "scripts/pass_args.jl",
+            "args" => ["1", "2", "3"]
+        )
+        t = from_dict(SimpleTask, taskinfo)
+        exec = build_runner(t)
+        @test exec == JuliaModuleRunner(script="scripts/pass_args.jl", args=["1", "2", "3"])
+        rst = with_sandbox(includes=[scripts_dir]) do
+            execute_task(t; workdir=workdir_prefix)
+        end
+        @test rst == 6
     end
 end

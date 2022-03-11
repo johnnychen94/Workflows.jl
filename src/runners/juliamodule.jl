@@ -1,5 +1,7 @@
 @option struct JuliaModuleRunner <: AbstractTaskRunner
     script::String
+    """are passed to `ARGS` during execution"""
+    args::Vector{String} = String[]
     workdir::String = "@__DIR__"
     """set false to disable stdout, i.e., redirect to devnull."""
     enable_stdout::Bool = true
@@ -20,6 +22,7 @@ function execute_task(exec::JuliaModuleRunner, t::AbstractTask; workdir::String=
         m = Module(gensym())
         @debug "Executing task $(task_id(t)) in julia module" workdir=pwd() script
         Core.eval(m, :(include(x) = Base.include($m, x)))
+        Core.eval(m, :(ARGS=$(exec.args)))
         try
             out = redirect_stdio(stdout=stdout, stderr=stderr, stdin=devnull) do
                 Core.eval(m, :(Base.include($m, $script)))
