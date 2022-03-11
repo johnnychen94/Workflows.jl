@@ -10,9 +10,14 @@ Execute workflow `w` or workflow defined in file `filename`.
 - `cleanup=false`: true to clean the internal tmp files in `.workflows/tmp` folder when
   julia exits.
 """
-function execute(filename::AbstractString; workdir="", kwargs...)
+function execute(filename::AbstractString; workdir::Union{String,Nothing}=nothing, kwargs...)
     w = load_config(filename)
-    workdir = isempty(workdir) ? dirname(filename) : workdir
+    workdir = if isnothing(workdir)
+        dir = dirname(filename)
+        isempty(dir) ? "." : dir # dirname("file.yml") == ""
+    else
+        workdir
+    end
     execute(w; workdir=workdir, kwargs...)
 end
 
