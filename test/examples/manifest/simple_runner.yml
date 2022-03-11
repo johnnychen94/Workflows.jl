@@ -1,0 +1,76 @@
+version: "0.1"
+dialect: "manifest_runner"
+
+runners:
+  juliamodule:
+    runner: juliamodule
+    run:
+      script: ${{ tasks.run.script }}
+
+  julia_stdout:
+    runner: shell
+    run:
+      command: julia --startup=no --project=. ${{ tasks.run.script }}
+      capture: true
+
+  julia:
+    runner: shell
+    run:
+      command: julia --startup=no --project=. ${{ tasks.run.script }}
+      enable_stderr: false
+      enable_stdout: false
+
+tasks:
+  - name: "init"
+    id: "0"
+    runner: shell
+    run:
+      command: julia --startup=no --project=. -e 'using Pkg; Pkg.instantiate()'
+      enable_stderr: false
+      enable_stdout: false
+
+  - name: "small sum"
+    id: "1"
+    groups: ["Type:Base", "Type:Benchmark"]
+    deps: ["scripts"]
+    requires: ["0"]
+    runner: juliamodule
+    run:
+      script: scripts/small_sum.jl
+
+  - name: "norm"
+    id: "2"
+    groups: ["Package:LinearAlgebra", "Type:Benchmark"]
+    deps: ["scripts"]
+    requires: ["0"]
+    runner: julia_stdout
+    run:
+      script: scripts/large_sum.jl
+
+  - name: "exp"
+    id: "3"
+    groups: ["Package:Base", "Type:Benchmark"]
+    deps: ["scripts"]
+    outs: ["test_outs/exp.json"]
+    requires: ["0"]
+    runner: julia
+    run:
+      script: scripts/exp.jl
+
+  - name: "summary"
+    id: "4"
+    groups: ["Type:LinearAlgebra", "Type:Benchmark"]
+    deps: ["summary.jl", "@__STDOUT__1", "@__STDOUT__2", "test_outs/exp.json"]
+    outs: ["test_outs/results.json"]
+    runner: "shell"
+    requires: ["1", "2", "3"]
+    run:
+      command: julia --startup=no --project=. summary.jl
+
+  - name: "print result"
+    id: "5"
+    deps: ["test_outs/results.json"]
+    runner: "shell"
+    requires: ["4"]
+    run:
+      command: julia --startup=no --project=. print.jl

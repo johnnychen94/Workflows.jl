@@ -1,2 +1,7 @@
+[manifest_runner]
+version = "0.1.0"
+provider = "Workflows"
+
 [manifest]
 version = "0.1.0"
+provider = "Workflows"

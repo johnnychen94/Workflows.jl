@@ -1,0 +1,100 @@
+version: "0.1"
+dialect: manifest_runner
+
+# define custom runners
+runners:
+  julia:
+    runner: shell
+    run:
+      command: julia --startup=no --project=. ${{ tasks.run.script }} ${{ tasks.run.args }}
+      capture: true
+    init: # if this runner is used, run init task first
+      runner: shell
+      run:
+        command: julia --startup=no --project=. -e 'using Pkg; Pkg.instantiate()'
+
+  python:
+    runner: shell
+    run:
+      command: python ${{ tasks.run.script }} ${{ tasks.run.args }}
+      capture: true
+    init:
+      runner: shell
+      run:
+        command: pip install -r requirements.txt -q
+
+tasks:
+  - name: "generate N uniform random numbers"
+    id: julia_rand
+    groups: [uniform, julia]
+    runner: julia
+    run:
+      script: scripts/julia/rand.jl
+      args:
+        - ${{ matrix.length }}
+    matrix:
+      length: [64, 128, 256, 512, 1024, 2048]
+
+  - name: "sum vector of N numbers"
+    groups: [sum, julia]
+    id: julia_sum
+    runner: julia
+    run:
+      script: scripts/julia/sum.jl
+      args:
+        - ${{ matrix.length }}
+    matrix:
+      length: [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+
+  - name: "generate N gaussian random numbers"
+    groups: [gaussian, numpy]
+    id: numpy_randn
+    runner: python
+    run:
+      script: scripts/numpy/randn.py
+      args:
+        - ${{ matrix.length }}
+    matrix:
+      length: [32, 64, 128, 256, 512, 1024, 2048]
+
+  - name: "sum vector of N numbers"
+    groups: [sum, numpy]
+    id: numpy_sum
+    runner: python
+    run:
+      script: scripts/numpy/sum.py
+      args:
+        - ${{ matrix.length }}
+    matrix:
+      length: [64, 128, 256, 512, 1024, 2048, 4096]
+
+  - name: "sum vector of N numbers"
+    groups: [sum, python]
+    id: python_sum
+    runner: python
+    run:
+      script: scripts/python/sum.py
+      args:
+        - ${{ matrix.length }}
+    matrix:
+      length: [64, 128, 256, 512, 1024, 2048, 4096]
+
+  - name: summary
+    id: summary
+    groups: [benchmark]
+    deps:
+      - "@__STDOUT__julia_rand"
+      - "@__STDOUT__julia_sum"
+      - "@__STDOUT__numpy_randn"
+      - "@__STDOUT__numpy_sum"
+      - "@__STDOUT__python_sum"
+    requires:
+      - julia_rand
+      - julia_sum
+      - numpy_randn
+      - numpy_sum
+      - python_sum
+    outs: ["reports"]
+    runner: shell
+    run:
+      command: julia --startup=no --project=. summary.jl

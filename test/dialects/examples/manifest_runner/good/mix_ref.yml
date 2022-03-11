@@ -1,0 +1,47 @@
+version: "0.1"
+dialect: manifest
+
+tasks:
+  - name: "hello"
+    id: hello1
+    runner: shell
+    run:
+      command: julia --startup=no -e 'println("hello world!")'
+
+  - name: "hello again"
+    id: hello2
+    runner: shell
+    run:
+      command: julia --startup=no -e 'println("hello Workflows.jl!")'
+
+  - name: "hello the third time"
+    id: hello3
+    runner: shell
+    run:
+      command: julia --startup=no -e 'println("hello and hello!")'
+
+  - name: "initialize hi runner"
+    id: _gen_hi_init
+    runner: shell
+    run:
+      command: julia --startup=no -e 'println("initialize hi runner")'
+
+  - name: "hi"
+    id: hi1
+    runner: shell
+    requires: ["_gen_hi_init"]
+    run:
+      command: julia --startup=no -e 'println("hi!")'
+
+  - name: "hi"
+    id: hi2
+    runner: shell
+    requires: ["hello1", "_gen_hi_init"]
+    run:
+      command: julia --startup=no -e 'println("hi!")'
+
+  - name: "julia"
+    id: julia1
+    runner: shell
+    run:
+      command: julia --startup=no hello.jl world Workflows.jl
