@@ -71,45 +71,6 @@ function Base.collect(t::LoopTask)
     return items
 end
 
-"""
-    render(old, patterns::Dict) -> new
-
-Recursively render strings in `old` by substituting `patterns`.
-
-```jldoctest; setup=:(using Workflows.Dialects: render)
-julia> render("echo \${{ greet }}, \${{ name }}", Dict("greet"=>"hello", "name"=>"world"))
-"echo hello, world"
-
-julia> render("echo \${{ values }}", Dict("values" => "[1, 2, 3]"))
-"echo [1, 2, 3]"
-```
-"""
-function render(config::Dict{String}, patterns::Dict)
-    out = Dict{String,Any}()
-    for (k, old) in config
-        out[k] = render(old, patterns)
-    end
-    return out
-end
-render(contents::Vector{String}, patterns) = map(v->render(v, patterns), contents)
-
-function render(content::String, patterns::Dict)
-    build_regex(name, value) = r"\${{\s*" * name * r"\s*}}" => value
-
-    # TODO(johnnychen94): tweak the performance of `replace`
-    out = _replace(content, (build_regex(k, v) for (k, v) in patterns)...)
-    return out
-end
-render(x::Number, patterns) = x
-
-@static if VERSION < v"1.7"
-    # slooooow version
-    _replace(s, pat1, pat2...; kwargs...) = _replace(_replace(s, pat1; kwargs...), pat2...; kwargs...)
-    _replace(s, pat1; kwargs...) = replace(s, pat1; kwargs...)
-else
-    _replace(s, pat...; kwargs...) = replace(s, pat...; kwargs...)
-end
-
 
 # TaskVector is a simple collection of tasks while still preserving the `AbstractTask`
 # hierarchy. This can be used to store the unrolled LoopTask.

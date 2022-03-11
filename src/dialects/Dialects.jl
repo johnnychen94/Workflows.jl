@@ -5,6 +5,7 @@ using TOML
 import YAML
 using Printf
 using ..TaskGraphs
+using ..StringPatterns
 
 import Configurations: from_dict, to_dict
 

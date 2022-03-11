@@ -6,6 +6,8 @@ using JSON3
 
 include("taskgraphs/TaskGraphs.jl")
 using .TaskGraphs
+include("stringpatterns/StringPatterns.jl")
+using .StringPatterns
 
 include("dialects/Dialects.jl")
 using .Dialects: load_config, save_config
