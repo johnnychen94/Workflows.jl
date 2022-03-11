@@ -246,4 +246,26 @@ end
     exec = build_runner(t)
     rst = execute_task(t)
     @test rst == "hello world"
+
+    # multiple commands
+    taskinfo["run"] = Dict(
+        "command" => [
+            "julia --startup=no -e 'println(1)'",
+            "julia --startup=no -e 'println(2)'",
+        ],
+        "capture_stdout" => false
+    )
+    t = from_dict(SimpleTask, taskinfo)
+    msg = @capture_out execute_task(t)
+    @test msg == "1\n2\n"
+
+    taskinfo["run"] = Dict(
+        "command" => [
+            "julia --startup=no -e 'println(\"this message should not be seen\")'",
+            "julia --startup=no -e 'println(2)'",
+        ],
+        "capture_stdout" => true
+    )
+    t = from_dict(SimpleTask, taskinfo)
+    @test "2" == execute_task(t)
 end

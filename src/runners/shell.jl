@@ -1,5 +1,5 @@
 @option struct ShellRunner <: AbstractTaskRunner
-    command::String
+    command::Vector{String}
     workdir::String = "@__DIR__"
     """set true to capture the last non-empty line of stdout as execution result. The captured result will not be printed to stdout."""
     capture_stdout::Bool = false
@@ -12,25 +12,33 @@
 end
 build_runner(::Val{:shell}, run_info::AbstractDict) = from_dict(ShellRunner, run_info)
 
+function Configurations.from_dict(::Type{ShellRunner}, ::OptionField{:command}, ::Type{Vector{String}}, command)
+    isa(command, String) ? [command] : command
+end
+
 function execute_task(exec::ShellRunner, t::AbstractTask; workdir::String=".", env=nothing)
-    cmd = strip(exec.command)
+    rst = ""
     workdir = replace(exec.workdir, "@__DIR__" => workdir)
     cd(workdir) do
-        @debug "executing task $(task_id(t)) in shell runner" workdir=pwd()
-        # TODO: redirect stdout as result
-        stdout = exec.enable_stdout ? Base.stdout : devnull
-        stderr = exec.enable_stderr ? Base.stderr : devnull
-        try
-            if exec.capture_stdout
-                capture_run(cmd; stdout=stdout, stderr=stderr, env=env)
-            else
-                non_capture_run(cmd; stdout=stdout, stderr=stderr, env=env)
+        for cmd in exec.command
+            cmd = strip(cmd)
+            @debug "executing task $(task_id(t)) in shell runner" workdir=pwd()
+            # TODO: redirect stdout as result
+            stdout = exec.enable_stdout ? Base.stdout : devnull
+            stderr = exec.enable_stderr ? Base.stderr : devnull
+            try
+                if exec.capture_stdout
+                    rst = capture_run(cmd; stdout=stdout, stderr=stderr, env=env)
+                else
+                    rst = non_capture_run(cmd; stdout=stdout, stderr=stderr, env=env)
+                end
+            catch err
+                exec.strict ? rethrow() : @warn "failed to execute task $(task_id(t)) in shell runner" err
+                # TODO(johnnychen94): maybe cleanup intermediate results?
             end
-        catch err
-            exec.strict ? rethrow() : @warn "failed to execute task $(task_id(t)) in shell runner" err
-            # TODO(johnnychen94): maybe cleanup intermediate results?
         end
     end
+    return rst # result of last command
 end
 
 
